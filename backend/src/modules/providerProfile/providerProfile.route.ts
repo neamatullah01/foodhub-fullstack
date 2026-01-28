@@ -4,6 +4,8 @@ import verifyAuth, { Role } from "../../middlewares/verifyAuth";
 
 const router = Router();
 
+router.get("/", providerProfileController.getAllProvider);
+
 router.post(
   "/",
   verifyAuth(Role.PROVIDER),

@@ -15,6 +15,16 @@ const createProfile: RequestHandler = async (req, res, next) => {
   }
 };
 
+const getAllProvider: RequestHandler = async (req, res, next) => {
+  try {
+    const result = await providerProfileServices.getAllProvider();
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const providerProfileController = {
   createProfile,
+  getAllProvider,
 };
