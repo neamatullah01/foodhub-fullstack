@@ -44,6 +44,7 @@ model ProviderProfile {
   userId         String  @unique
   restaurantName String
   description    String?
+  // imageUrl       String? //!need to add
   address        String
   phone          String
   isApproved     Boolean @default(false)
@@ -55,9 +56,10 @@ model ProviderProfile {
 }
 
 model Category {
-  id    String @id @default(uuid())
-  name  String @unique
-  meals Meal[]
+  id       String  @id @default(uuid())
+  name     String  @unique
+  imageUrl String?
+  meals    Meal[]
 }
 
 model Meal {

@@ -14,7 +14,27 @@ const createCategory: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+const getAllCategory: RequestHandler = async (req, res, next) => {
+  try {
+    const result = await categoryServices.getAllCategory();
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteCategory: RequestHandler = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await categoryServices.deleteCategory(id as string);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const categoryController = {
   createCategory,
+  getAllCategory,
+  deleteCategory,
 };

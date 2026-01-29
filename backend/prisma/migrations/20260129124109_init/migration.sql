@@ -37,6 +37,7 @@ CREATE TABLE "ProviderProfile" (
 CREATE TABLE "Category" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "imageUrl" TEXT,
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
