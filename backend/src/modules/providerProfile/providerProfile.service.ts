@@ -27,7 +27,16 @@ const getAllProvider = async () => {
   });
 };
 
+const getProviderById = async (id: string) => {
+  return await prisma.providerProfile.findUnique({
+    where: {
+      id,
+    },
+  });
+};
+
 export const providerProfileServices = {
   createProfile,
   getAllProvider,
+  getProviderById,
 };

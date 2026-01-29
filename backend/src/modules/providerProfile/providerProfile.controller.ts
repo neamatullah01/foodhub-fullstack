@@ -24,7 +24,18 @@ const getAllProvider: RequestHandler = async (req, res, next) => {
   }
 };
 
+const getProviderById: RequestHandler = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await providerProfileServices.getProviderById(id as string);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const providerProfileController = {
   createProfile,
   getAllProvider,
+  getProviderById,
 };
