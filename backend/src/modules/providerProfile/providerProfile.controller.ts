@@ -16,6 +16,7 @@ const createProfile: RequestHandler = async (req, res, next) => {
 };
 
 const getAllProvider: RequestHandler = async (req, res, next) => {
+  //!pagination will be added
   try {
     const result = await providerProfileServices.getAllProvider();
     res.status(200).json(result);
