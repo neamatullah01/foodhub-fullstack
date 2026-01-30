@@ -13,4 +13,16 @@ router.post(
   providerProfileController.createProfile,
 );
 
+router.post(
+  "/meals",
+  verifyAuth(Role.PROVIDER),
+  providerProfileController.addMeal,
+);
+
+router.patch(
+  "/meals/:id",
+  verifyAuth(Role.PROVIDER),
+  providerProfileController.updateMeal,
+);
+
 export const providerProfileRouter = router;

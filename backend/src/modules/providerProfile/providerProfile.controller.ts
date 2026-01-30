@@ -35,8 +35,38 @@ const getProviderById: RequestHandler = async (req, res, next) => {
   }
 };
 
+const addMeal: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    const result = await providerProfileServices.addMeal(
+      userId as string,
+      req.body,
+    );
+    res.status(201).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const updateMeal: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+    const result = await providerProfileServices.updateMeal(
+      id as string,
+      req.body,
+      userId as string,
+    );
+    res.status(200).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
+
 export const providerProfileController = {
   createProfile,
   getAllProvider,
   getProviderById,
+  addMeal,
+  updateMeal,
 };

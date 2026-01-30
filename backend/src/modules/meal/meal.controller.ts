@@ -3,15 +3,6 @@ import { mealService } from "./meal.service";
 import { GetAllMealQuery } from "./meal.types";
 import paginationSortingHelper from "../../helpers/paginationSortingHelpers";
 
-const addMeal = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.user?.id;
-    const result = await mealService.addMeal(userId as string, req.body);
-    res.status(201).json(result);
-  } catch (e) {
-    next(e);
-  }
-};
 const getAllMeal = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { search }: GetAllMealQuery = req.query;
@@ -33,6 +24,5 @@ const getAllMeal = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const mealController = {
-  addMeal,
   getAllMeal,
 };

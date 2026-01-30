@@ -18,11 +18,11 @@ app.use(express.json());
 
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
-app.use("/api/meals", mealRouter);
-
 app.use("/api/providers", providerProfileRouter);
 
 app.use("/api/categories", categoryRouter);
+
+app.use("/api/meals", mealRouter);
 
 app.get("/", (req, res) => {
   res.send("FoodHub API running...");
