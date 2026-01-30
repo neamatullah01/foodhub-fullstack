@@ -5,6 +5,7 @@ import { auth } from "./lib/auth";
 import { mealRouter } from "./modules/meal/meal.route";
 import { providerProfileRouter } from "./modules/providerProfile/providerProfile.route";
 import { categoryRouter } from "./modules/category/category.route";
+import { orderRouter } from "./modules/order/order.route";
 
 const app = express();
 
@@ -23,6 +24,8 @@ app.use("/api/providers", providerProfileRouter);
 app.use("/api/categories", categoryRouter);
 
 app.use("/api/meals", mealRouter);
+
+app.use("/api/orders", orderRouter);
 
 app.get("/", (req, res) => {
   res.send("FoodHub API running...");
