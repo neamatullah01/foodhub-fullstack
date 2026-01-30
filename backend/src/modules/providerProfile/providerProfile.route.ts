@@ -25,4 +25,10 @@ router.patch(
   providerProfileController.updateMeal,
 );
 
+router.delete(
+  "/meals/:id",
+  verifyAuth(Role.PROVIDER),
+  providerProfileController.removeMeal,
+);
+
 export const providerProfileRouter = router;

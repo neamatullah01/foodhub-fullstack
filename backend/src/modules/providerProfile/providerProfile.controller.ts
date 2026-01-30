@@ -63,10 +63,25 @@ const updateMeal: RequestHandler = async (req, res, next) => {
   }
 };
 
+const removeMeal: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+    const result = await providerProfileServices.removeMeal(
+      id as string,
+      userId as string,
+    );
+    res.status(200).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
+
 export const providerProfileController = {
   createProfile,
   getAllProvider,
   getProviderById,
   addMeal,
   updateMeal,
+  removeMeal,
 };

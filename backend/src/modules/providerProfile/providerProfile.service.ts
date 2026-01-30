@@ -93,10 +93,42 @@ const updateMeal = async (
   });
 };
 
+const removeMeal = async (mealId: string, userId: string) => {
+  const mealData = await prisma.meal.findUniqueOrThrow({
+    where: {
+      id: mealId,
+    },
+    select: {
+      id: true,
+      providerId: true,
+    },
+  });
+  const providerData = await prisma.providerProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+    select: {
+      id: true,
+      userId: true,
+    },
+  });
+
+  if (mealData.providerId !== providerData.id) {
+    throw new Error("You are not the provider of this meal!");
+  }
+
+  return await prisma.meal.delete({
+    where: {
+      id: mealData.id,
+    },
+  });
+};
+
 export const providerProfileServices = {
   createProfile,
   getAllProvider,
   getProviderById,
   addMeal,
   updateMeal,
+  removeMeal,
 };
