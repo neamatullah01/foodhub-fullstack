@@ -23,6 +23,17 @@ const getAllMeal = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getMealById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const result = await mealService.getMealById(id as string);
+    res.status(200).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
+
 export const mealController = {
   getAllMeal,
+  getMealById,
 };

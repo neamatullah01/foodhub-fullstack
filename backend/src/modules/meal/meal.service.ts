@@ -50,6 +50,15 @@ const getAllMeal = async ({
   };
 };
 
+const getMealById = async (id: string) => {
+  return await prisma.meal.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+};
+
 export const mealService = {
   getAllMeal,
+  getMealById,
 };
