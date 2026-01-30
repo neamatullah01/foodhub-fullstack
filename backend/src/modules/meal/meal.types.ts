@@ -7,3 +7,7 @@ export interface AddMealInput {
   providerId: string;
   categoryId: string;
 }
+
+export interface GetAllMealQuery {
+  search?: string;
+}
