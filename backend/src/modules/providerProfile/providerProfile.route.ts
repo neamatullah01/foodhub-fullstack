@@ -5,6 +5,13 @@ import verifyAuth, { Role } from "../../middlewares/verifyAuth";
 const router = Router();
 
 router.get("/", providerProfileController.getAllProvider);
+
+router.get(
+  "/orders",
+  verifyAuth(Role.PROVIDER),
+  providerProfileController.getIncomingOrders,
+);
+
 router.get("/:id", providerProfileController.getProviderById);
 
 router.post(

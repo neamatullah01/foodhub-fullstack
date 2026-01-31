@@ -124,6 +124,33 @@ const removeMeal = async (mealId: string, userId: string) => {
   });
 };
 
+const getIncomingOrders = async (userId: string) => {
+  const providerData = await prisma.providerProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+    select: {
+      id: true,
+      userId: true,
+    },
+  });
+  return await prisma.order.findMany({
+    where: {
+      providerId: providerData.id,
+      status: "PENDING",
+    },
+    include: {
+      orderItems: {
+        include: { meal: true },
+      },
+      user: {
+        select: { name: true },
+      },
+    },
+    orderBy: { createdAt: "asc" },
+  });
+};
+
 export const providerProfileServices = {
   createProfile,
   getAllProvider,
@@ -131,4 +158,5 @@ export const providerProfileServices = {
   addMeal,
   updateMeal,
   removeMeal,
+  getIncomingOrders,
 };

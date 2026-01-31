@@ -77,6 +77,18 @@ const removeMeal: RequestHandler = async (req, res, next) => {
   }
 };
 
+const getIncomingOrders: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    const result = await providerProfileServices.getIncomingOrders(
+      userId as string,
+    );
+    res.status(200).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
+
 export const providerProfileController = {
   createProfile,
   getAllProvider,
@@ -84,4 +96,5 @@ export const providerProfileController = {
   addMeal,
   updateMeal,
   removeMeal,
+  getIncomingOrders,
 };
