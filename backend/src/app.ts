@@ -8,6 +8,7 @@ import { categoryRouter } from "./modules/category/category.route";
 import { orderRouter } from "./modules/order/order.route";
 import { reviewRouter } from "./modules/review/review.route";
 import { userRouter } from "./modules/user/user.route";
+import { adminRouter } from "./modules/admin/admin.route";
 
 const app = express();
 
@@ -22,6 +23,8 @@ app.use(express.json());
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use("/api/users", userRouter);
+
+app.use("/api/admin", adminRouter);
 
 app.use("/api/providers", providerProfileRouter);
 
