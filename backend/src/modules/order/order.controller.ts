@@ -12,7 +12,17 @@ const placeOrder: RequestHandler = async (req, res, next) => {
     next(e);
   }
 };
+const getCustomerOrders: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    const result = await orderServices.getCustomerOrders(userId as string);
+    res.status(200).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
 
 export const orderController = {
   placeOrder,
+  getCustomerOrders,
 };

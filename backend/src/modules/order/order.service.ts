@@ -56,6 +56,26 @@ const placeOrder = async (userId: string, data: PlaceOrderInput) => {
   });
 };
 
+const getCustomerOrders = async (userId: string) => {
+  return await prisma.order.findMany({
+    where: {
+      userId,
+    },
+    include: {
+      orderItems: {
+        include: {
+          meal: true,
+        },
+      },
+      provider: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
 export const orderServices = {
   placeOrder,
+  getCustomerOrders,
 };
