@@ -16,7 +16,7 @@ async function seedAdmin() {
     });
 
     if (existingUser) {
-      throw new Error("Admin already exists!!");
+      throw new Error("Admin already exists!");
     }
 
     const signUpAdmin = await fetch(
