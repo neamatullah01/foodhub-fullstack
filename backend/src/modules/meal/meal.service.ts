@@ -3,12 +3,14 @@ import { prisma } from "../../lib/prisma";
 const getAllMeal = async ({
   search,
   page,
+  skip,
   limit,
   sortBy,
   sortOrder,
 }: {
   search: string | undefined;
   page: number;
+  skip: number;
   limit: number;
   sortBy: string;
   sortOrder: string;
@@ -30,6 +32,8 @@ const getAllMeal = async ({
     }
   }
   const allMeal = await prisma.meal.findMany({
+    skip,
+    take: limit,
     where,
     orderBy: {
       [sortBy]: sortOrder,

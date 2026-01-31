@@ -4,11 +4,11 @@ import verifyAuth, { Role } from "../../middlewares/verifyAuth";
 
 const router = Router();
 
-router.get("/profile", verifyAuth(Role.PROVIDER), userController.getMyProfile); //!customer
+router.get("/profile", verifyAuth(Role.CUSTOMER), userController.getMyProfile);
 router.patch(
   "/update-profile",
-  verifyAuth(Role.PROVIDER),
+  verifyAuth(Role.CUSTOMER),
   userController.updateMyProfile,
-); //!customer
+);
 
 export const userRouter = router;

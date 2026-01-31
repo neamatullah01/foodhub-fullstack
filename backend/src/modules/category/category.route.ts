@@ -1,12 +1,17 @@
 import { Router } from "express";
 import { categoryController } from "./category.controller";
+import verifyAuth, { Role } from "../../middlewares/verifyAuth";
 
 const router = Router();
 
 router.get("/", categoryController.getAllCategory);
 
-router.post("/", categoryController.createCategory); //!Add admin middleware here
+router.post("/", verifyAuth(Role.ADMIN), categoryController.createCategory);
 
-router.delete("/:id", categoryController.deleteCategory); //!Add admin middleware here
+router.delete(
+  "/:id",
+  verifyAuth(Role.ADMIN),
+  categoryController.deleteCategory,
+);
 
 export const categoryRouter = router;

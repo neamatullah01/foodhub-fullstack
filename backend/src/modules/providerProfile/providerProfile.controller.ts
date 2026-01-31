@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import { providerProfileServices } from "./providerProfile.service";
+import paginationSortingHelper from "../../helpers/paginationSortingHelpers";
 
 const createProfile: RequestHandler = async (req, res, next) => {
   try {
@@ -16,9 +17,15 @@ const createProfile: RequestHandler = async (req, res, next) => {
 };
 
 const getAllProvider: RequestHandler = async (req, res, next) => {
-  //!pagination will be added
   try {
-    const result = await providerProfileServices.getAllProvider();
+    const { search }: { search?: string } = req.query;
+    const { page, skip, limit } = paginationSortingHelper(req.query);
+    const result = await providerProfileServices.getAllProvider({
+      search,
+      page,
+      skip,
+      limit,
+    });
     res.status(200).json(result);
   } catch (error) {
     next(error);

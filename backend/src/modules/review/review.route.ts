@@ -4,6 +4,6 @@ import verifyAuth, { Role } from "../../middlewares/verifyAuth";
 
 const router = Router();
 
-router.post("/:mealId", verifyAuth(Role.PROVIDER), reviewController.addReview);
+router.post("/:mealId", verifyAuth(Role.CUSTOMER), reviewController.addReview);
 
 export const reviewRouter = router;

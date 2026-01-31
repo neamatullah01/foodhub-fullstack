@@ -4,14 +4,14 @@ import verifyAuth, { Role } from "../../middlewares/verifyAuth";
 
 const router = Router();
 
-router.get("/", verifyAuth(Role.PROVIDER), orderController.getCustomerOrders); //!here role will be customer
+router.get("/", verifyAuth(Role.CUSTOMER), orderController.getCustomerOrders);
 
 router.get(
   "/:orderId",
-  verifyAuth(Role.PROVIDER),
+  verifyAuth(Role.CUSTOMER),
   orderController.cancelOrderByCustomer,
-); //!here role will be customer
+);
 
-router.post("/", verifyAuth(Role.PROVIDER), orderController.placeOrder); //!here role will be customer
+router.post("/", verifyAuth(Role.CUSTOMER), orderController.placeOrder);
 
 export const orderRouter = router;

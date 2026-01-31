@@ -20,12 +20,50 @@ const createProfile = async (data: ProfileInputData, userId: string) => {
   });
 };
 
-const getAllProvider = async () => {
-  return await prisma.providerProfile.findMany({
-    where: {
-      isApproved: true,
+const getAllProvider = async ({
+  search,
+  page,
+  skip,
+  limit,
+}: {
+  search: string | undefined;
+  page: number;
+  skip: number;
+  limit: number;
+}) => {
+  const where: any = {
+    isApproved: true,
+  };
+
+  if (search && typeof search === "string") {
+    where.restaurantName = {
+      contains: search,
+      mode: "insensitive",
+    };
+  }
+
+  const providers = await prisma.providerProfile.findMany({
+    where,
+    skip,
+    take: limit,
+    include: {
+      meals: true,
     },
   });
+
+  const total = await prisma.providerProfile.count({
+    where,
+  });
+
+  return {
+    data: providers,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
 };
 
 const getProviderById = async (id: string) => {
