@@ -22,7 +22,22 @@ const getCustomerOrders: RequestHandler = async (req, res, next) => {
   }
 };
 
+const cancelOrderByCustomer: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    const { orderId } = req.params;
+    const result = await orderServices.cancelOrderByCustomer(
+      orderId as string,
+      userId as string,
+    );
+    res.status(200).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
+
 export const orderController = {
   placeOrder,
   getCustomerOrders,
+  cancelOrderByCustomer,
 };

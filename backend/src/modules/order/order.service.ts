@@ -75,7 +75,27 @@ const getCustomerOrders = async (userId: string) => {
   });
 };
 
+const cancelOrderByCustomer = async (orderId: string, userId: string) => {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+  });
+
+  if (!order || order.userId !== userId) {
+    throw new Error("Unauthorized");
+  }
+
+  if (order.status !== "PENDING") {
+    throw new Error("Order can no longer be cancelled");
+  }
+
+  return await prisma.order.update({
+    where: { id: orderId },
+    data: { status: "CANCELLED" },
+  });
+};
+
 export const orderServices = {
   placeOrder,
   getCustomerOrders,
+  cancelOrderByCustomer,
 };

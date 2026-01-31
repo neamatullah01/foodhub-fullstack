@@ -38,4 +38,10 @@ router.delete(
   providerProfileController.removeMeal,
 );
 
+router.patch(
+  "/orders/:orderId",
+  verifyAuth(Role.PROVIDER),
+  providerProfileController.updateOrderStatus,
+);
+
 export const providerProfileRouter = router;

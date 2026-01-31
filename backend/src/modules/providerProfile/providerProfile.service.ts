@@ -1,4 +1,4 @@
-import { Meal } from "../../generated/prisma/client";
+import { Meal, OrderStatus } from "../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import { AddMealInput, ProfileInputData } from "./providerProfile.types";
 
@@ -151,6 +151,38 @@ const getIncomingOrders = async (userId: string) => {
   });
 };
 
+const updateOrderStatus = async (
+  orderId: string,
+  userId: string,
+  status: OrderStatus,
+) => {
+  const providerData = await prisma.providerProfile.findUniqueOrThrow({
+    where: {
+      userId,
+    },
+    select: {
+      id: true,
+      userId: true,
+    },
+  });
+  const order = await prisma.order.findUnique({
+    where: {
+      id: orderId,
+    },
+  });
+
+  if (!order || providerData.id !== order.providerId) {
+    throw new Error("Unauthorized");
+  }
+
+  return await prisma.order.update({
+    where: {
+      id: order.id,
+    },
+    data: { status },
+  });
+};
+
 export const providerProfileServices = {
   createProfile,
   getAllProvider,
@@ -159,4 +191,5 @@ export const providerProfileServices = {
   updateMeal,
   removeMeal,
   getIncomingOrders,
+  updateOrderStatus,
 };
