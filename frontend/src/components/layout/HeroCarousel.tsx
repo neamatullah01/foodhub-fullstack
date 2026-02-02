@@ -1,0 +1,128 @@
+"use client";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
+import Image from "next/image";
+
+const SLIDES = [
+  {
+    id: 1,
+    image:
+      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=2000&auto=format&fit=crop",
+    subtitle: "Cheesy & Crispy",
+    title: "Italian Pizza",
+    description:
+      "Authentic wood-fired pizza topped with fresh basil, mozzarella, and secret tomato sauce.",
+  },
+  {
+    id: 2,
+    image:
+      "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=2000&auto=format&fit=crop",
+    subtitle: "Juicy & Massive",
+    title: "Monster Burger",
+    description:
+      "Double beef patty, cheddar cheese, fresh lettuce, and our signature smoky sauce.",
+  },
+  {
+    id: 3,
+    image:
+      "https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=2000&auto=format&fit=crop",
+    subtitle: "Spicy & Aromatic",
+    title: "Chicken Biryani",
+    description:
+      "Traditional Dum Biryani cooked with premium basmati rice and exotic spices.",
+  },
+];
+
+export default function HeroCarousel() {
+  return (
+    <section className="relative w-full h-[600px] md:h-[850px] overflow-hidden bg-white dark:bg-[#0f0f0f]">
+      <Swiper
+        modules={[Navigation, Pagination, Autoplay, EffectFade]}
+        effect="fade"
+        speed={1000}
+        navigation
+        pagination={{ clickable: true }}
+        autoplay={{ delay: 6000, disableOnInteraction: false }}
+        loop={true}
+        className="w-full h-full"
+      >
+        {SLIDES.map((slide) => (
+          <SwiperSlide key={slide.id}>
+            <div className="relative w-full h-full overflow-hidden">
+              {/* Image with Ken Burns Zoom */}
+              <div className="absolute inset-0 w-full h-full animate-ken-burns">
+                <Image
+                  src={slide.image}
+                  alt={slide.title}
+                  fill
+                  className="object-cover"
+                  priority={slide.id === 1}
+                />
+              </div>
+
+              {/* Dark Gradient Overlay - Always dark for text readability */}
+              <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/80 dark:to-[#0f0f0f]/90" />
+
+              {/* Text Content */}
+              <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-white px-4 z-20 pb-20">
+                <span className="text-3xl md:text-5xl font-handwriting text-[#7dbd21] mb-4 font-bold drop-shadow-md -rotate-6">
+                  {slide.subtitle}
+                </span>
+                <h2 className="text-6xl md:text-8xl lg:text-9xl font-extrabold mb-6 drop-shadow-xl uppercase tracking-tighter">
+                  {slide.title}
+                </h2>
+                <p className="max-w-2xl text-lg md:text-xl mb-10 text-gray-200 font-medium drop-shadow-md">
+                  {slide.description}
+                </p>
+
+                {/* Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button className="bg-[#e63e3e] hover:bg-[#c92d2d] text-white px-10 py-4 rounded-full font-bold uppercase tracking-wide transition-all transform hover:scale-105 shadow-xl border-2 border-transparent">
+                    Order Now
+                  </button>
+                  <button className="bg-transparent border-2 border-white hover:bg-white hover:text-[#e63e3e] text-white px-10 py-4 rounded-full font-bold uppercase tracking-wide transition-all">
+                    View Menu
+                  </button>
+                </div>
+              </div>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+
+      {/* THEME-ADAPTIVE WAVE SEPARATOR */}
+      {/* fill-white = Matches Light Mode Background
+          dark:fill-[#0f0f0f] = Matches Dark Mode Background 
+      */}
+      <div className="absolute bottom-0 left-0 w-full z-30 leading-none">
+        <svg
+          className="relative block w-[calc(100%+1.3px)] h-[60px] md:h-[120px]"
+          data-name="Layer 1"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1200 120"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+            className="fill-white dark:fill-[#0f0f0f] transition-colors duration-300"
+          ></path>
+        </svg>
+      </div>
+
+      <style jsx global>{`
+        @keyframes kenBurns {
+          0% {
+            transform: scale(1);
+          }
+          100% {
+            transform: scale(1.15);
+          }
+        }
+        .animate-ken-burns {
+          animation: kenBurns 20s ease-out infinite alternate;
+        }
+      `}</style>
+    </section>
+  );
+}
