@@ -44,14 +44,15 @@ export default function HeroCarousel() {
         navigation
         pagination={{ clickable: true }}
         autoplay={{ delay: 6000, disableOnInteraction: false }}
-        loop={true}
+        loop
+        simulateTouch={false}
+        touchStartPreventDefault={false}
         className="w-full h-full"
       >
         {SLIDES.map((slide) => (
           <SwiperSlide key={slide.id}>
             <div className="relative w-full h-full overflow-hidden">
-              {/* Image with Ken Burns Zoom */}
-              <div className="absolute inset-0 w-full h-full animate-ken-burns">
+              <div className="absolute inset-0 animate-ken-burns">
                 <Image
                   src={slide.image}
                   alt={slide.title}
@@ -60,28 +61,27 @@ export default function HeroCarousel() {
                   priority={slide.id === 1}
                 />
               </div>
+              <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/80 dark:to-[#0f0f0f]/90 pointer-events-none" />
 
-              {/* Dark Gradient Overlay - Always dark for text readability */}
-              <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/80 dark:to-[#0f0f0f]/90" />
-
-              {/* Text Content */}
               <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-white px-4 z-20 pb-20">
-                <span className="text-3xl md:text-5xl font-handwriting text-[#7dbd21] mb-4 font-bold drop-shadow-md -rotate-6">
+                <span className="text-3xl md:text-5xl font-bold text-[#7dbd21] mb-4 drop-shadow-md -rotate-6">
                   {slide.subtitle}
                 </span>
+
                 <h2 className="text-6xl md:text-8xl lg:text-9xl font-extrabold mb-6 drop-shadow-xl uppercase tracking-tighter">
                   {slide.title}
                 </h2>
+
                 <p className="max-w-2xl text-lg md:text-xl mb-10 text-gray-200 font-medium drop-shadow-md">
                   {slide.description}
                 </p>
 
-                {/* Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <button className="bg-[#e63e3e] hover:bg-[#c92d2d] text-white px-10 py-4 rounded-full font-bold uppercase tracking-wide transition-all transform hover:scale-105 shadow-xl border-2 border-transparent">
+                <div className="flex flex-col sm:flex-row gap-4 z-50">
+                  <button className="swiper-no-swiping bg-[#e63e3e] hover:bg-[#c92d2d] text-white px-10 py-4 rounded-full font-bold uppercase tracking-wide transition-all transform hover:scale-105 shadow-xl cursor-pointer">
                     Order Now
                   </button>
-                  <button className="bg-transparent border-2 border-white hover:bg-white hover:text-[#e63e3e] text-white px-10 py-4 rounded-full font-bold uppercase tracking-wide transition-all">
+
+                  <button className="swiper-no-swiping bg-transparent border-2 border-white hover:bg-white hover:text-[#e63e3e] text-white px-10 py-4 rounded-full font-bold uppercase tracking-wide transition-all cursor-pointer">
                     View Menu
                   </button>
                 </div>
@@ -90,23 +90,17 @@ export default function HeroCarousel() {
           </SwiperSlide>
         ))}
       </Swiper>
-
-      {/* THEME-ADAPTIVE WAVE SEPARATOR */}
-      {/* fill-white = Matches Light Mode Background
-          dark:fill-[#0f0f0f] = Matches Dark Mode Background 
-      */}
-      <div className="absolute bottom-0 left-0 w-full z-30 leading-none">
+      <div className="absolute bottom-0 left-0 w-full z-30 leading-none pointer-events-none">
         <svg
-          className="relative block w-[calc(100%+1.3px)] h-[60px] md:h-[120px]"
-          data-name="Layer 1"
+          className="block w-[calc(100%+1.3px)] h-[60px] md:h-[120px]"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"
         >
           <path
             d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-            className="fill-white dark:fill-[#0f0f0f] transition-colors duration-300"
-          ></path>
+            className="fill-white dark:fill-[#0f0f0f]"
+          />
         </svg>
       </div>
 
@@ -121,6 +115,17 @@ export default function HeroCarousel() {
         }
         .animate-ken-burns {
           animation: kenBurns 20s ease-out infinite alternate;
+        }
+
+        .swiper-button-next,
+        .swiper-button-prev {
+          color: white;
+          z-index: 60;
+          pointer-events: auto;
+        }
+
+        .swiper-pagination {
+          z-index: 60;
         }
       `}</style>
     </section>
