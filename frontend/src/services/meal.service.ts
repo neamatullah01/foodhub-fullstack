@@ -2,12 +2,17 @@ import { env } from "@/env";
 
 const API_URL = env.API_URL;
 
-export const categoryService = {
-  getCategories: async function () {
+export const mealService = {
+  getAllMeal: async function (limit: number = 10) {
     try {
-      const res = await fetch(`${API_URL}/categories`, {
+      const res = await fetch(`${API_URL}/meals?limit=${limit}`, {
         cache: "no-store",
       });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch meals");
+      }
+
       const data = await res.json();
       return { data: data, error: null };
     } catch (error) {
