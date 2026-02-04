@@ -1,7 +1,8 @@
-import { CategoryCarousel } from "@/components/layout/CategoryCarousel";
-import { FeaturedMenu } from "@/components/layout/FeaturedMenu";
-import HeroCarousel from "@/components/layout/HeroCarousel";
-import { ProviderList } from "@/components/layout/ProviderList";
+import { CategoryCarousel } from "@/components/modules/homepage/CategoryCarousel";
+import { FeaturedMenu } from "@/components/modules/homepage/FeaturedMenu";
+import HeroCarousel from "@/components/modules/homepage/HeroCarousel";
+import { ProviderList } from "@/components/modules/homepage/ProviderList";
+import { WhyChooseUs } from "@/components/modules/homepage/WhyChooseUs";
 import { categoryService } from "@/services/category.service";
 import { mealService } from "@/services/meal.service";
 import { providerService } from "@/services/provider.service";
@@ -16,6 +17,7 @@ export default async function Home() {
         <HeroCarousel></HeroCarousel>
         <CategoryCarousel categories={categories.data}></CategoryCarousel>
         <FeaturedMenu items={data.data || []}></FeaturedMenu>
+        <WhyChooseUs></WhyChooseUs>
         <ProviderList providers={providers.data.data}></ProviderList>
       </div>
     </div>
