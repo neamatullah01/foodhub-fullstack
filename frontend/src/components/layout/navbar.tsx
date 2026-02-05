@@ -117,7 +117,7 @@ const Navbar = ({
           title: "Become a Provider",
           description: "Join FoodHub and sell your homemade food.",
           icon: <UtensilsCrossed className="size-5 shrink-0" />,
-          url: "/register?role=provider",
+          url: "/register",
         },
       ],
     },
