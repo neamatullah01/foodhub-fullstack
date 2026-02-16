@@ -13,21 +13,18 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Github, Mail, Loader2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
-// 1. Define Zod Schema for Login
 const loginSchema = z.object({
   email: z.email("Please enter a valid email address"),
   password: z.string().min(1, "Password is required"),
 });
 
 export default function LoginPage() {
-  // 2. Setup Form
   const form = useForm({
     defaultValues: {
       email: "",
       password: "",
     },
     onSubmit: async ({ value, formApi }) => {
-      // --- A. Manual Validation ---
       const result = loginSchema.safeParse(value);
 
       if (!result.success) {
@@ -41,15 +38,13 @@ export default function LoginPage() {
         toast.error("Please check your credentials.");
         return;
       }
-
-      // --- B. Submit to Backend ---
       const toastId = toast.loading("Signing in...");
 
       try {
         const { data, error } = await authClient.signIn.email({
           email: value.email,
           password: value.password,
-          callbackURL: "/", // Redirect to home on success
+          callbackURL: "/",
         });
 
         if (error) {
@@ -68,7 +63,6 @@ export default function LoginPage() {
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-screen">
-      {/* --- Left Side: Visual --- */}
       <div className="hidden bg-muted lg:block relative h-full w-full overflow-hidden">
         <div
           className="absolute inset-0 h-full w-full bg-cover bg-center"
@@ -96,7 +90,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* --- Right Side: Form --- */}
       <div className="flex items-center justify-center py-12 px-4 sm:px-8 bg-white dark:bg-slate-950">
         <Link
           href="/"
@@ -123,7 +116,6 @@ export default function LoginPage() {
             }}
             className="grid gap-4"
           >
-            {/* EMAIL FIELD */}
             <form.Field
               name="email"
               children={(field) => (
@@ -165,7 +157,6 @@ export default function LoginPage() {
               )}
             />
 
-            {/* PASSWORD FIELD */}
             <form.Field
               name="password"
               children={(field) => (
@@ -214,7 +205,6 @@ export default function LoginPage() {
               )}
             />
 
-            {/* SUBMIT BUTTON */}
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
@@ -232,7 +222,6 @@ export default function LoginPage() {
             />
           </form>
 
-          {/* Social Login Separator */}
           <div className="relative my-2">
             <div className="absolute inset-0 flex items-center">
               <Separator />
@@ -244,7 +233,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Social Buttons (UI Only for now) */}
           <div className="grid grid-cols-2 gap-4">
             <Button variant="outline" className="w-full" type="button">
               <Mail className="mr-2 h-4 w-4" /> Google

@@ -9,7 +9,7 @@ import { providerService } from "@/services/provider.service";
 
 export default async function Home() {
   const categories = await categoryService.getCategories();
-  const { data } = await mealService.getAllMeal(8);
+  const { data } = await mealService.getAllMeal({ limit: 8 });
   const providers = await providerService.getAllProviders(5);
   return (
     <div>

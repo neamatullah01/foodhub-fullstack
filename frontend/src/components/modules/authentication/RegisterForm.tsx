@@ -155,7 +155,7 @@ export default function RegisterPage() {
                         : ""
                     }
                   >
-                    {role === "CUSTOMER" ? "Full Name" : "Restaurant Name"}
+                    {role === "CUSTOMER" ? "Full Name" : "Provider Name"}
                   </Label>
                   <Input
                     id={field.name}
@@ -171,9 +171,7 @@ export default function RegisterPage() {
                         }));
                       }
                     }}
-                    placeholder={
-                      role === "CUSTOMER" ? "John Doe" : "Burger King"
-                    }
+                    placeholder={"Enter your full name"}
                     className="bg-slate-50 dark:bg-slate-900"
                   />
                   {field.state.meta.errorMap["onChange"] && (
@@ -268,7 +266,7 @@ export default function RegisterPage() {
 
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([isSubmitting]) => (
+              children={([canSubmit, isSubmitting]) => (
                 <Button
                   type="submit"
                   disabled={isSubmitting}
@@ -283,7 +281,6 @@ export default function RegisterPage() {
             />
           </form>
 
-          {/* Login Link */}
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
               <Separator />

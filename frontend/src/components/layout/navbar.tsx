@@ -1,16 +1,10 @@
 "use client";
 
-import {
-  Menu,
-  UtensilsCrossed,
-  ChefHat,
-  ShoppingBag,
-  Coffee,
-  Pizza,
-  Search,
-} from "lucide-react";
+import { Menu, UtensilsCrossed, Search } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client"; // 1. Import Auth Client
+import { useRouter } from "next/navigation";
 
 import {
   Accordion,
@@ -37,6 +31,7 @@ import {
 } from "@/components/ui/sheet";
 import { ModeToggle } from "./ModeToggle";
 
+// ... (Keep your MenuItem interface)
 interface MenuItem {
   title: string;
   url: string;
@@ -63,6 +58,8 @@ interface NavbarProps {
       url: string;
     };
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  user?: any; // 2. Ensure user prop is here
 }
 
 const Navbar = ({
@@ -72,6 +69,7 @@ const Navbar = ({
     title: "FoodHub",
   },
   menu = [
+    // ... (Your existing menu array)
     { title: "Home", url: "/" },
     {
       title: "Browse Meals",
@@ -83,51 +81,26 @@ const Navbar = ({
           icon: <Search className="size-5 shrink-0" />,
           url: "/meals",
         },
-        {
-          title: "Fast Food",
-          description: "Burgers, pizzas, and quick bites.",
-          icon: <Pizza className="size-5 shrink-0" />,
-          url: "/meals?category=fast-food",
-        },
-        {
-          title: "Healthy Choice",
-          description: "Salads, keto, and low-calorie options.",
-          icon: <Coffee className="size-5 shrink-0" />,
-          url: "/meals?category=healthy",
-        },
-        {
-          title: "Desserts",
-          description: "Sweet treats to finish your meal.",
-          icon: <ShoppingBag className="size-5 shrink-0" />,
-          url: "/meals?category=desserts",
-        },
+        // ... other items
       ],
     },
-    {
-      title: "Providers",
-      url: "/providers",
-      items: [
-        {
-          title: "Find a Chef",
-          description: "Discover top-rated home cooks near you.",
-          icon: <ChefHat className="size-5 shrink-0" />,
-          url: "/providers",
-        },
-        {
-          title: "Become a Provider",
-          description: "Join FoodHub and sell your homemade food.",
-          icon: <UtensilsCrossed className="size-5 shrink-0" />,
-          url: "/register",
-        },
-      ],
-    },
+    // ...
   ],
   auth = {
     login: { title: "Login", url: "/login" },
     signup: { title: "Sign up", url: "/register" },
   },
   className,
+  user,
 }: NavbarProps) => {
+  const router = useRouter();
+
+  // 3. Create Logout Handler
+  const handleLogout = async () => {
+    await authClient.signOut();
+    router.refresh(); // Refresh page to update state
+  };
+
   return (
     <section
       className={cn(
@@ -139,7 +112,6 @@ const Navbar = ({
         {/* Desktop Menu */}
         <nav className="hidden h-16 items-center justify-between lg:flex">
           <div className="flex items-center gap-6">
-            {/* Logo */}
             <Link href={logo.url} className="flex items-center gap-2">
               <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <UtensilsCrossed className="size-5" />
@@ -149,7 +121,6 @@ const Navbar = ({
               </span>
             </Link>
 
-            {/* Desktop Nav Items */}
             <div className="flex items-center">
               <NavigationMenu>
                 <NavigationMenuList>
@@ -159,23 +130,35 @@ const Navbar = ({
             </div>
           </div>
 
-          {/* Auth Buttons */}
+          {/* 4. Desktop Auth Buttons Logic */}
           <div className="flex gap-2">
             <Button asChild size="sm">
-              <ModeToggle></ModeToggle>
+              <ModeToggle />
             </Button>
-            <Button asChild variant="ghost" size="sm">
-              <Link href={auth.login.url}>{auth.login.title}</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href={auth.signup.url}>{auth.signup.title}</Link>
-            </Button>
+
+            {user.data ? (
+              // If User Exists: Logout + Disabled Signup
+              <>
+                <Button size="sm" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              // If No User: Login + Signup
+              <>
+                <Button asChild variant="ghost" size="sm">
+                  <Link href={auth.login.url}>{auth.login.title}</Link>
+                </Button>
+                <Button asChild size="sm">
+                  <Link href={auth.signup.url}>{auth.signup.title}</Link>
+                </Button>
+              </>
+            )}
           </div>
         </nav>
 
         {/* Mobile Menu */}
         <div className="flex h-16 items-center justify-between lg:hidden">
-          {/* Logo */}
           <Link href={logo.url} className="flex items-center gap-2">
             <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <UtensilsCrossed className="size-5" />
@@ -211,13 +194,22 @@ const Navbar = ({
                   {menu.map((item) => renderMobileMenuItem(item))}
                 </Accordion>
 
+                {/* 5. Mobile Auth Buttons Logic */}
                 <div className="flex flex-col gap-3 border-t pt-6">
-                  <Button asChild variant="outline">
-                    <Link href={auth.login.url}>{auth.login.title}</Link>
-                  </Button>
-                  <Button asChild>
-                    <Link href={auth.signup.url}>{auth.signup.title}</Link>
-                  </Button>
+                  {user ? (
+                    <>
+                      <Button onClick={handleLogout}>Logout</Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button asChild variant="outline">
+                        <Link href={auth.login.url}>{auth.login.title}</Link>
+                      </Button>
+                      <Button asChild>
+                        <Link href={auth.signup.url}>{auth.signup.title}</Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </SheetContent>
@@ -228,8 +220,7 @@ const Navbar = ({
   );
 };
 
-// --- Desktop Menu Renderers ---
-
+// ... (Keep the rest of your renderMenuItem and helper functions exactly as they were)
 const renderMenuItem = (item: MenuItem) => {
   if (item.items) {
     return (
@@ -250,7 +241,6 @@ const renderMenuItem = (item: MenuItem) => {
     );
   }
 
-  // --- FIXED SECTION BELOW ---
   return (
     <NavigationMenuItem key={item.title}>
       <NavigationMenuLink asChild>
@@ -260,10 +250,7 @@ const renderMenuItem = (item: MenuItem) => {
       </NavigationMenuLink>
     </NavigationMenuItem>
   );
-  // ---------------------------
 };
-
-// --- Mobile Menu Renderers ---
 
 const renderMobileMenuItem = (item: MenuItem) => {
   if (item.items) {

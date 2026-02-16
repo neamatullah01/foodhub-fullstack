@@ -5,7 +5,7 @@ const API_URL = env.API_URL;
 export const providerService = {
   getAllProviders: async function (limit: number = 10) {
     try {
-      const res = await fetch(`${API_URL}/providers?limit=${limit}`, {
+      const res = await fetch(`${API_URL}/api/providers?limit=${limit}`, {
         cache: "no-store",
       });
       const data = await res.json();

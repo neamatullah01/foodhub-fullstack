@@ -5,7 +5,7 @@ const API_URL = env.API_URL;
 export const categoryService = {
   getCategories: async function () {
     try {
-      const res = await fetch(`${API_URL}/categories`, {
+      const res = await fetch(`${API_URL}/api/categories`, {
         cache: "no-store",
       });
       const data = await res.json();
