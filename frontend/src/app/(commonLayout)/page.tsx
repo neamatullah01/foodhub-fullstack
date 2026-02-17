@@ -16,9 +16,9 @@ export default async function Home() {
       <div>
         <HeroCarousel></HeroCarousel>
         <CategoryCarousel categories={categories.data}></CategoryCarousel>
-        <FeaturedMenu items={data.data || []}></FeaturedMenu>
-        <WhyChooseUs></WhyChooseUs>
         <ProviderList providers={providers.data.data}></ProviderList>
+        <WhyChooseUs></WhyChooseUs>
+        <FeaturedMenu items={data.data || []}></FeaturedMenu>
       </div>
     </div>
   );

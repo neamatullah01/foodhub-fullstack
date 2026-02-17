@@ -30,8 +30,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ModeToggle } from "./ModeToggle";
+import { CartSheet } from "../modules/cart/CartSheet";
 
-// ... (Keep your MenuItem interface)
 interface MenuItem {
   title: string;
   url: string;
@@ -59,7 +59,7 @@ interface NavbarProps {
     };
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  user?: any; // 2. Ensure user prop is here
+  user?: any;
 }
 
 const Navbar = ({
@@ -69,7 +69,6 @@ const Navbar = ({
     title: "FoodHub",
   },
   menu = [
-    // ... (Your existing menu array)
     { title: "Home", url: "/" },
     {
       title: "Browse Meals",
@@ -81,7 +80,6 @@ const Navbar = ({
           icon: <Search className="size-5 shrink-0" />,
           url: "/meals",
         },
-        // ... other items
       ],
     },
     // ...
@@ -95,10 +93,9 @@ const Navbar = ({
 }: NavbarProps) => {
   const router = useRouter();
 
-  // 3. Create Logout Handler
   const handleLogout = async () => {
     await authClient.signOut();
-    router.refresh(); // Refresh page to update state
+    router.refresh();
   };
 
   return (
@@ -109,7 +106,6 @@ const Navbar = ({
       )}
     >
       <div className="container mx-auto px-4">
-        {/* Desktop Menu */}
         <nav className="hidden h-16 items-center justify-between lg:flex">
           <div className="flex items-center gap-6">
             <Link href={logo.url} className="flex items-center gap-2">
@@ -132,6 +128,7 @@ const Navbar = ({
 
           {/* 4. Desktop Auth Buttons Logic */}
           <div className="flex gap-2">
+            <CartSheet />
             <Button asChild size="sm">
               <ModeToggle />
             </Button>
@@ -169,11 +166,15 @@ const Navbar = ({
           </Link>
 
           <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="size-5" />
-              </Button>
-            </SheetTrigger>
+            <div className="flex gap-2">
+              <CartSheet></CartSheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="size-7" />
+                </Button>
+              </SheetTrigger>
+            </div>
+
             <SheetContent side="right" className="overflow-y-auto">
               <SheetHeader>
                 <SheetTitle>
@@ -196,7 +197,7 @@ const Navbar = ({
 
                 {/* 5. Mobile Auth Buttons Logic */}
                 <div className="flex flex-col gap-3 border-t pt-6">
-                  {user ? (
+                  {user.data ? (
                     <>
                       <Button onClick={handleLogout}>Logout</Button>
                     </>

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { ShoppingCart, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/hooks/use-cart";
 
 export interface Provider {
   id: string;
@@ -21,6 +22,7 @@ export interface Meal {
 }
 
 export function AllMeals({ meals }: { meals: Meal[] }) {
+  const cart = useCart();
   return (
     <div className="flex flex-col gap-6">
       {meals.length === 0 ? (
@@ -63,7 +65,17 @@ export function AllMeals({ meals }: { meals: Meal[] }) {
                 <div className="mt-auto">
                   <Button
                     disabled={!meal.isAvailable}
-                    className="rounded-full bg-[#e11d48] hover:bg-[#be123c] text-white border-none shadow-md transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed px-6"
+                    onClick={() => {
+                      cart.addItem({
+                        id: meal.id,
+                        name: meal.name,
+                        price: meal.price,
+                        imageUrl: meal.imageUrl,
+                        providerId: meal.provider.id,
+                        restaurantName: meal.provider.restaurantName,
+                      });
+                    }}
+                    className="w-[80%] rounded-full bg-[#e11d48] hover:bg-[#be123c] text-white border-none shadow-lg transition-transform active:scale-95 disabled:opacity-50"
                   >
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     {meal.isAvailable ? "Add to cart" : "Out of stock"}

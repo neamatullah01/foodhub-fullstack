@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { MapPin, Phone, ShoppingCart, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/hooks/use-cart";
 
 export interface Meal {
   id: string;
@@ -25,6 +26,7 @@ export interface Provider {
 }
 
 export function ProviderProfile({ provider }: { provider: Provider }) {
+  const cart = useCart();
   const bannerImage =
     provider.imageUrl ||
     "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop";
@@ -120,7 +122,17 @@ export function ProviderProfile({ provider }: { provider: Provider }) {
 
                     <Button
                       disabled={!meal.isAvailable}
-                      className="w-[90%] rounded-full bg-[#e11d48] hover:bg-[#be123c] text-white border-none shadow-lg transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                      onClick={() => {
+                        cart.addItem({
+                          id: meal.id,
+                          name: meal.name,
+                          price: meal.price,
+                          imageUrl: meal.imageUrl,
+                          providerId: provider.id,
+                          restaurantName: provider.restaurantName,
+                        });
+                      }}
+                      className="w-[80%] rounded-full bg-[#e11d48] hover:bg-[#be123c] text-white border-none shadow-lg transition-transform active:scale-95 disabled:opacity-50"
                     >
                       <ShoppingCart className="w-4 h-4 mr-2" />
                       {meal.isAvailable ? "Add to cart" : "Out of stock"}

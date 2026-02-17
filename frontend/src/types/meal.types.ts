@@ -1,7 +1,12 @@
 export interface Meal {
-  id: string | number;
+  id: string;
   name: string;
   description: string;
-  price: string | number;
+  price: number;
   imageUrl: string;
+  isAvailable: boolean;
+  provider: {
+    id: string;
+    restaurantName: string;
+  };
 }

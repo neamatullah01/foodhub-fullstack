@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, ArrowRight } from "lucide-react";
 import { Meal } from "@/types/meal.types";
+import { useCart } from "@/hooks/use-cart";
 
 export function FeaturedMenu({ items }: { items: Meal[] }) {
+  const cart = useCart();
   return (
     <section className="py-20 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       <div className="container mx-auto px-4">
@@ -46,9 +48,22 @@ export function FeaturedMenu({ items }: { items: Meal[] }) {
                   <p className="text-gray-300 text-sm mb-6 line-clamp-2 px-2">
                     {item.description}
                   </p>
-                  <Button className="rounded-full px-8 py-6 font-semibold text-white shadow-lg transition-transform active:scale-95 bg-red-600 hover:bg-green-600 border-none">
-                    <ShoppingCart className="mr-2 h-5 w-5" />
-                    Add to cart
+                  <Button
+                    disabled={!item.isAvailable}
+                    onClick={() => {
+                      cart.addItem({
+                        id: item.id,
+                        name: item.name,
+                        price: item.price,
+                        imageUrl: item.imageUrl,
+                        providerId: item.provider.id,
+                        restaurantName: item.provider.restaurantName,
+                      });
+                    }}
+                    className="w-[80%] rounded-full bg-[#e11d48] hover:bg-[#be123c] text-white border-none shadow-lg transition-transform active:scale-95 disabled:opacity-50"
+                  >
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    {item.isAvailable ? "Add to cart" : "Out of stock"}
                   </Button>
                 </div>
               </div>
