@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowDown, MapPin, Phone, Utensils } from "lucide-react";
 import { Provider } from "@/types/provider.types";
+import Link from "next/link";
 
 export function ProviderList({ providers }: { providers: Provider[] }) {
   return (
@@ -88,9 +89,11 @@ export function ProviderList({ providers }: { providers: Provider[] }) {
         </div>
 
         <div className="flex justify-center">
-          <Button className="rounded-full bg-[#FFC222] hover:bg-[#ffcd44] text-black font-bold px-10 py-6 text-base shadow-lg hover:shadow-xl transition-all">
-            View More
-          </Button>
+          <Link href="/providers">
+            <Button className="rounded-full bg-[#FFC222] hover:bg-[#ffcd44] text-black font-bold px-10 py-6 text-base shadow-lg hover:shadow-xl transition-all">
+              View More
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
