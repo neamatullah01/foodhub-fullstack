@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowDown, MapPin, Phone, Utensils } from "lucide-react";
+import { ArrowDown, ArrowRight, MapPin, Phone, Utensils } from "lucide-react";
 import { Provider } from "@/types/provider.types";
 import Link from "next/link";
 
@@ -75,12 +75,12 @@ export function ProviderList({ providers }: { providers: Provider[] }) {
                   </div>
 
                   <div className="absolute bottom-6 right-6">
-                    <Button
-                      size="icon"
-                      className="rounded-full bg-[#FFC222] hover:bg-[#ffcd44] text-black h-10 w-10 shadow-md transition-transform group-hover:-rotate-90"
+                    <Link
+                      href={`/providers/${item.id}`}
+                      className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-[#FFC222] hover:bg-[#e5ae1e] text-black flex items-center justify-center shadow-md transition-transform active:scale-95 group-hover:translate-x-1"
                     >
-                      <ArrowDown className="h-5 w-5" />
-                    </Button>
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
                   </div>
                 </div>
               </div>

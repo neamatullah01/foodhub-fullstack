@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    dangerouslyAllowSVG: true,
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
@@ -18,7 +19,15 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "ui-avatars.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "images.unsplash.com",
+        port: "",
+        pathname: "/**",
       },
     ],
   },
