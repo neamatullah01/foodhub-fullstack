@@ -4,6 +4,9 @@ import Image from "next/image";
 import { MapPin, Phone, ShoppingCart, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 export interface Meal {
   id: string;
@@ -27,6 +30,8 @@ export interface Provider {
 
 export function ProviderProfile({ provider }: { provider: Provider }) {
   const cart = useCart();
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
   const bannerImage =
     provider.imageUrl ||
     "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop";
@@ -123,6 +128,18 @@ export function ProviderProfile({ provider }: { provider: Provider }) {
                     <Button
                       disabled={!meal.isAvailable}
                       onClick={() => {
+                        if (!session?.user) {
+                          toast.error(
+                            "Please login to add items to your cart.",
+                          );
+                          router.push("/login");
+                          return;
+                        }
+                        if (session?.user && !session.user) {
+                          toast.error("Only customers can place orders.");
+                          return;
+                        }
+
                         cart.addItem({
                           id: meal.id,
                           name: meal.name,
@@ -132,7 +149,7 @@ export function ProviderProfile({ provider }: { provider: Provider }) {
                           restaurantName: provider.restaurantName,
                         });
                       }}
-                      className="w-[80%] rounded-full bg-[#e11d48] hover:bg-[#be123c] text-white border-none shadow-lg transition-transform active:scale-95 disabled:opacity-50"
+                      className="rounded-full bg-[#e11d48] hover:bg-[#be123c] text-white border-none shadow-md transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed px-6"
                     >
                       <ShoppingCart className="w-4 h-4 mr-2" />
                       {meal.isAvailable ? "Add to cart" : "Out of stock"}

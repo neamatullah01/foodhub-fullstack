@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Github, Mail, Loader2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useSearchParams } from "next/navigation";
 
 const loginSchema = z.object({
   email: z.email("Please enter a valid email address"),
@@ -19,6 +20,8 @@ const loginSchema = z.object({
 });
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const form = useForm({
     defaultValues: {
       email: "",
@@ -44,7 +47,7 @@ export default function LoginPage() {
         const { data, error } = await authClient.signIn.email({
           email: value.email,
           password: value.password,
-          callbackURL: "/",
+          callbackURL: callbackUrl,
         });
 
         if (error) {

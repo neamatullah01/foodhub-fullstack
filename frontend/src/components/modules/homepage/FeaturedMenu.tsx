@@ -6,9 +6,16 @@ import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, ArrowRight } from "lucide-react";
 import { Meal } from "@/types/meal.types";
 import { useCart } from "@/hooks/use-cart";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 export function FeaturedMenu({ items }: { items: Meal[] }) {
   const cart = useCart();
+  const router = useRouter();
+
+  // 2. Get the current user session
+  const { data: session } = authClient.useSession();
   return (
     <section className="py-20 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       <div className="container mx-auto px-4">
@@ -51,16 +58,33 @@ export function FeaturedMenu({ items }: { items: Meal[] }) {
                   <Button
                     disabled={!item.isAvailable}
                     onClick={() => {
+                      // --- AUTHENTICATION CHECKS ---
+
+                      // Check 1: Is the user logged in?
+                      if (!session?.user) {
+                        toast.error("Please login to add items to your cart.");
+                        router.push("/login"); // Send them to the login page
+                        return;
+                      }
+
+                      // Check 2: Is the user a customer?
+                      // (Adjust "customer" to match exactly how you named the role in your database)
+                      if (session?.user && !session.user) {
+                        toast.error("Only customers can place orders.");
+                        return;
+                      }
+
+                      // --- IF CHECKS PASS, ADD TO CART ---
                       cart.addItem({
                         id: item.id,
                         name: item.name,
                         price: item.price,
                         imageUrl: item.imageUrl,
-                        providerId: item.provider.id,
+                        providerId: item.provider.id, // Or item.provider.id depending on your prop
                         restaurantName: item.provider.restaurantName,
                       });
                     }}
-                    className="w-[80%] rounded-full bg-[#e11d48] hover:bg-[#be123c] text-white border-none shadow-lg transition-transform active:scale-95 disabled:opacity-50"
+                    className="rounded-full bg-[#e11d48] hover:bg-[#be123c] text-white border-none shadow-md transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed px-6"
                   >
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     {item.isAvailable ? "Add to cart" : "Out of stock"}

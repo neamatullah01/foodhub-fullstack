@@ -30,7 +30,6 @@ export const useCart = create<CartStore>()(
         const currentItems = get().items;
         const existingItem = currentItems.find((item) => item.id === data.id);
 
-        // Optional Food Delivery Logic: Restrict cart to one provider at a time
         if (
           currentItems.length > 0 &&
           currentItems[0].providerId !== data.providerId
@@ -42,7 +41,6 @@ export const useCart = create<CartStore>()(
         }
 
         if (existingItem) {
-          // If item exists, increase quantity
           set({
             items: currentItems.map((item) =>
               item.id === data.id
@@ -52,7 +50,6 @@ export const useCart = create<CartStore>()(
           });
           toast.success("Increased item quantity");
         } else {
-          // Add new item
           set({ items: [...currentItems, { ...data, quantity: 1 }] });
           toast.success(`${data.name} added to cart!`);
         }
@@ -85,7 +82,7 @@ export const useCart = create<CartStore>()(
       },
     }),
     {
-      name: "foodhub-cart-storage", // name of the item in localStorage
+      name: "foodhub-cart-storage",
       storage: createJSONStorage(() => localStorage),
     },
   ),

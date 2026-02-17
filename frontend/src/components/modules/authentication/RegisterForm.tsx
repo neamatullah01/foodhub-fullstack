@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, ChefHat, User, Loader2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSearchParams } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -22,6 +23,8 @@ const formSchema = z.object({
 });
 
 export default function RegisterPage() {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [role, setRole] = useState("CUSTOMER");
 
   const form = useForm({
@@ -53,7 +56,7 @@ export default function RegisterPage() {
           password: value.password,
           name: value.name,
           role: role === "PROVIDER" ? "PROVIDER" : "CUSTOMER",
-          callbackURL: "/",
+          callbackURL: callbackUrl,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any);
 

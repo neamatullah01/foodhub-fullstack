@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/sheet";
 import { ModeToggle } from "./ModeToggle";
 import { CartSheet } from "../modules/cart/CartSheet";
+import { toast } from "sonner";
 
 interface MenuItem {
   title: string;
@@ -94,8 +95,14 @@ const Navbar = ({
   const router = useRouter();
 
   const handleLogout = async () => {
-    await authClient.signOut();
-    router.refresh();
+    try {
+      const toastId = toast.loading("Signing out...");
+      await authClient.signOut();
+      toast.success("Logged out successfully", { id: toastId });
+      router.refresh();
+    } catch (error) {
+      toast.error("Failed to log out. Please try again.", { id: toastId });
+    }
   };
 
   return (
