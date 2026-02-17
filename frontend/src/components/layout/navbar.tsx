@@ -95,8 +95,8 @@ const Navbar = ({
   const router = useRouter();
 
   const handleLogout = async () => {
+    const toastId = toast.loading("Signing out...");
     try {
-      const toastId = toast.loading("Signing out...");
       await authClient.signOut();
       toast.success("Logged out successfully", { id: toastId });
       router.refresh();
