@@ -1,10 +1,18 @@
 "use client";
 
-import { Menu, UtensilsCrossed, Search } from "lucide-react";
+import {
+  Menu,
+  UtensilsCrossed,
+  Search,
+  User,
+  ShoppingBag,
+  LogOut,
+} from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { authClient } from "@/lib/auth-client"; // 1. Import Auth Client
+import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import {
   Accordion,
@@ -29,9 +37,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import { ModeToggle } from "./ModeToggle";
 import { CartSheet } from "../modules/cart/CartSheet";
-import { toast } from "sonner";
+import { ProfileDropdown } from "./ProfileDropdown";
 
 interface MenuItem {
   title: string;
@@ -83,7 +93,6 @@ const Navbar = ({
         },
       ],
     },
-    // ...
   ],
   auth = {
     login: { title: "Login", url: "/login" },
@@ -100,6 +109,7 @@ const Navbar = ({
       await authClient.signOut();
       toast.success("Logged out successfully", { id: toastId });
       router.refresh();
+      router.push("/");
     } catch (error) {
       toast.error("Failed to log out. Please try again.", { id: toastId });
     }
@@ -113,6 +123,7 @@ const Navbar = ({
       )}
     >
       <div className="container mx-auto px-4">
+        {/* --- DESKTOP NAV --- */}
         <nav className="hidden h-16 items-center justify-between lg:flex">
           <div className="flex items-center gap-6">
             <Link href={logo.url} className="flex items-center gap-2">
@@ -133,27 +144,24 @@ const Navbar = ({
             </div>
           </div>
 
-          {/* 4. Desktop Auth Buttons Logic */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             <CartSheet />
-            <Button asChild size="sm">
+            <Button asChild size="sm" variant="ghost">
               <ModeToggle />
             </Button>
 
             {user.data ? (
-              // If User Exists: Logout + Disabled Signup
-              <>
-                <Button size="sm" onClick={handleLogout}>
-                  Logout
-                </Button>
-              </>
+              <ProfileDropdown user={user.data} />
             ) : (
-              // If No User: Login + Signup
               <>
                 <Button asChild variant="ghost" size="sm">
                   <Link href={auth.login.url}>{auth.login.title}</Link>
                 </Button>
-                <Button asChild size="sm">
+                <Button
+                  asChild
+                  size="sm"
+                  className="bg-[#FFC222] text-black hover:bg-[#e5ae1e]"
+                >
                   <Link href={auth.signup.url}>{auth.signup.title}</Link>
                 </Button>
               </>
@@ -161,7 +169,7 @@ const Navbar = ({
           </div>
         </nav>
 
-        {/* Mobile Menu */}
+        {/* --- MOBILE NAV --- */}
         <div className="flex h-16 items-center justify-between lg:hidden">
           <Link href={logo.url} className="flex items-center gap-2">
             <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
@@ -172,63 +180,120 @@ const Navbar = ({
             </span>
           </Link>
 
-          <Sheet>
-            <div className="flex gap-2">
-              <CartSheet></CartSheet>
+          <div className="flex items-center gap-2">
+            <CartSheet />
+
+            <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <Menu className="size-7" />
                 </Button>
               </SheetTrigger>
-            </div>
 
-            <SheetContent side="right" className="overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle>
-                  <Link href={logo.url} className="flex items-center gap-2">
-                    <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                      <UtensilsCrossed className="size-5" />
-                    </div>
-                    <span className="font-bold">{logo.title}</span>
-                  </Link>
-                </SheetTitle>
-              </SheetHeader>
-              <div className="flex flex-col gap-6 p-4">
-                <Accordion
-                  type="single"
-                  collapsible
-                  className="flex w-full flex-col gap-4"
-                >
-                  {menu.map((item) => renderMobileMenuItem(item))}
-                </Accordion>
+              <SheetContent
+                side="right"
+                className="overflow-y-auto flex flex-col h-full"
+              >
+                <SheetHeader>
+                  <SheetTitle className="text-left">
+                    <Link href={logo.url} className="flex items-center gap-2">
+                      <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                        <UtensilsCrossed className="size-5" />
+                      </div>
+                      <span className="font-bold">{logo.title}</span>
+                    </Link>
+                  </SheetTitle>
+                </SheetHeader>
 
-                {/* 5. Mobile Auth Buttons Logic */}
-                <div className="flex flex-col gap-3 border-t pt-6">
+                {/* Mobile Menu Links */}
+                <div className="flex-1 flex flex-col gap-6 p-4">
+                  <Accordion
+                    type="single"
+                    collapsible
+                    className="flex w-full flex-col gap-4"
+                  >
+                    {menu.map((item) => renderMobileMenuItem(item))}
+                  </Accordion>
+                </div>
+
+                {/* Mobile Auth & Profile Section (Pinned to Bottom) */}
+                <div className="border-t p-6 bg-slate-50/50 dark:bg-slate-900/50 mt-auto">
                   {user.data ? (
-                    <>
-                      <Button onClick={handleLogout}>Logout</Button>
-                    </>
+                    <div className="flex flex-col gap-4">
+                      {/* User Mini Profile Header */}
+                      <div className="flex items-center gap-3 mb-2">
+                        <Avatar className="h-10 w-10 border border-slate-200 dark:border-slate-700">
+                          <AvatarImage
+                            src={user.data.image || ""}
+                            alt={user.data.name}
+                          />
+                          <AvatarFallback className="bg-[#FFC222] text-black font-bold">
+                            {user.data.name?.substring(0, 2).toUpperCase() ||
+                              "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <p className="text-sm font-semibold text-foreground">
+                            {user.data.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground line-clamp-1">
+                            {user.data.email}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Mobile Profile Links */}
+                      <div className="flex flex-col gap-1">
+                        <Link
+                          href="/profile"
+                          className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        >
+                          <User className="size-4 text-[#FFC222]" />
+                          Manage Profile
+                        </Link>
+                        <Link
+                          href="/orders"
+                          className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        >
+                          <ShoppingBag className="size-4 text-[#FFC222]" />
+                          My Orders
+                        </Link>
+                      </div>
+
+                      <Button
+                        onClick={handleLogout}
+                        variant="outline"
+                        className="w-full mt-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 dark:border-red-900/30 dark:hover:bg-red-950/30"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Log out
+                      </Button>
+                    </div>
                   ) : (
-                    <>
-                      <Button asChild variant="outline">
+                    <div className="flex flex-col gap-3">
+                      <Button asChild variant="outline" className="w-full">
                         <Link href={auth.login.url}>{auth.login.title}</Link>
                       </Button>
-                      <Button asChild>
+                      <Button
+                        asChild
+                        className="w-full bg-[#FFC222] text-black hover:bg-[#e5ae1e]"
+                      >
                         <Link href={auth.signup.url}>{auth.signup.title}</Link>
                       </Button>
-                    </>
+                    </div>
                   )}
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </section>
   );
 };
 
-// ... (Keep the rest of your renderMenuItem and helper functions exactly as they were)
+// --- Helper Functions ---
+
 const renderMenuItem = (item: MenuItem) => {
   if (item.items) {
     return (
