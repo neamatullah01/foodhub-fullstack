@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
-import { userService } from "./services/user.service"; // Ensure Roles.customer exists here!
+import { NextRequest, NextResponse } from "next/server"; // Ensure Roles.customer exists here!
 import { Roles } from "./constants/roles";
+import { getSession } from "./services/user.service";
 
 // Note: In Next.js, this file should ideally be named `middleware.ts` at the root of your project (or inside `src/`).
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // 1. Fetch the session
-  const { data } = await userService.getSession();
+  const { data } = await getSession();
 
   const isAuthenticated = !!data;
   const userRole = data?.user?.role;
@@ -42,6 +42,7 @@ export const config = {
   matcher: [
     "/checkout",
     "/checkout/:path*",
+    "/profile",
     // Add any other customer-only routes here, like "/profile" or "/orders"
   ],
 };
