@@ -9,7 +9,6 @@ import { AutoRefresh } from "@/components/modules/orders/AutoRefresh";
 export default async function TrackOrdersPage() {
   const { data: orders, error } = await getMyOrders();
 
-  // Sort orders by newest first so active ones are at the top
   const sortedOrders = orders?.sort(
     (a: any, b: any) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),

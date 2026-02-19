@@ -43,6 +43,8 @@ export const config = {
     "/checkout",
     "/checkout/:path*",
     "/profile",
+    "/orders",
+    "/reviews",
     // Add any other customer-only routes here, like "/profile" or "/orders"
   ],
 };

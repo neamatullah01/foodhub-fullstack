@@ -2,8 +2,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "@tanstack/react-form";
-import { authClient } from "@/lib/auth-client";
+import { authClient, CustomUser } from "@/lib/auth-client";
 import { toast } from "sonner";
 import * as z from "zod";
 
@@ -20,6 +21,7 @@ const loginSchema = z.object({
 });
 
 export default function LoginPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const form = useForm({
@@ -47,7 +49,6 @@ export default function LoginPage() {
         const { data, error } = await authClient.signIn.email({
           email: value.email,
           password: value.password,
-          callbackURL: callbackUrl,
         });
 
         if (error) {
@@ -57,7 +58,18 @@ export default function LoginPage() {
           return;
         }
 
+        const user = data?.user as CustomUser | undefined;
+        const userRole = user?.role?.toUpperCase();
+
         toast.success("Welcome back!", { id: toastId });
+
+        if (userRole === "ADMIN") {
+          router.push("/admin/dashboard");
+        } else if (userRole === "PROVIDER") {
+          router.push("/provider/dashboard");
+        } else {
+          router.push(callbackUrl || "/");
+        }
       } catch (err) {
         toast.error("Something went wrong. Please try again.", { id: toastId });
       }
