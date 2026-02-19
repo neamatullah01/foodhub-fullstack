@@ -56,7 +56,7 @@ export function CheckoutForm() {
 
       toast.success("Order placed successfully!", { id: toastId });
       cart.clearCart();
-      router.push("/"); //! Change this to the order confirmation page if you have one
+      router.push("/orders");
     } catch (error) {
       toast.error("Failed to place order. Please try again.", { id: toastId });
     } finally {

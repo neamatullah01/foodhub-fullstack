@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { env } from "@/env";
 import { cookies } from "next/headers";
 
@@ -10,14 +12,17 @@ export async function getMyOrders() {
       headers: {
         Cookie: cookieStore.toString(),
       },
-      next: { tags: ["orders"] },
+      cache: "no-store",
     });
 
-    if (!res.ok) throw new Error("Failed to fetch orders");
+    if (!res.ok) {
+      throw new Error("Failed to fetch orders");
+    }
 
-    return await res.json();
-  } catch (error) {
-    console.error(error);
-    return { data: [] };
+    const data = await res.json();
+    return { data, error: null };
+  } catch (error: any) {
+    console.error("Fetch Orders Error:", error);
+    return { data: [], error: error.message };
   }
 }

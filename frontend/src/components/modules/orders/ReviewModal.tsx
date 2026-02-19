@@ -18,9 +18,11 @@ import { addReview } from "@/services/review.service";
 export function ReviewModal({
   providerId,
   orderId,
+  mealId,
 }: {
   providerId: string;
   orderId: string;
+  mealId: string;
 }) {
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState(0);
@@ -35,7 +37,7 @@ export function ReviewModal({
 
     setIsSubmitting(true);
     try {
-      await addReview({ providerId, orderId, rating, comment });
+      await addReview({ providerId, orderId, mealId, rating, comment });
       toast.success("Review submitted successfully!");
       setOpen(false);
     } catch (error: any) {
@@ -63,7 +65,6 @@ export function ReviewModal({
         </DialogHeader>
 
         <div className="flex flex-col gap-6 py-4">
-          {/* Star Rating Selection */}
           <div className="flex justify-center gap-2">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
