@@ -5,12 +5,12 @@ import { ProviderList } from "@/components/modules/homepage/ProviderList";
 import { WhyChooseUs } from "@/components/modules/homepage/WhyChooseUs";
 import { categoryService } from "@/services/category.service";
 import { mealService } from "@/services/meal.service";
-import { providerService } from "@/services/provider.service";
+import { getAllProviders } from "@/services/provider.service";
 
 export default async function Home() {
   const categories = await categoryService.getCategories();
   const { data } = await mealService.getAllMeal({ limit: 8 });
-  const providers = await providerService.getAllProviders(5);
+  const providers = await getAllProviders(5);
   return (
     <div>
       <div>

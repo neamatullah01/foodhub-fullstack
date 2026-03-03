@@ -7,6 +7,8 @@ import {
   User,
   ShoppingBag,
   LogOut,
+  LayoutDashboard,
+  ClipboardList,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -115,6 +117,10 @@ const Navbar = ({
     }
   };
 
+  // 1. Properly extract the deeply nested user object and role
+  const userData = user?.data?.user;
+  const role = userData?.role?.toUpperCase();
+
   return (
     <section
       className={cn(
@@ -145,13 +151,18 @@ const Navbar = ({
           </div>
 
           <div className="flex gap-2 items-center">
-            <CartSheet />
+            {/* 2. Hide Cart for Providers */}
+            {role !== "PROVIDER" && <CartSheet />}
+
             <Button asChild size="sm" variant="ghost">
               <ModeToggle />
             </Button>
 
-            {user.data ? (
-              <ProfileDropdown user={user.data} />
+            {userData ? (
+              <>
+                {/* Pass the extracted userData here so the Dropdown reads it correctly */}
+                <ProfileDropdown user={userData} />
+              </>
             ) : (
               <>
                 <Button asChild variant="ghost" size="sm">
@@ -181,7 +192,8 @@ const Navbar = ({
           </Link>
 
           <div className="flex items-center gap-2">
-            <CartSheet />
+            {/* 3. Hide Cart for Providers on Mobile */}
+            {role !== "PROVIDER" && <CartSheet />}
 
             <Sheet>
               <SheetTrigger asChild>
@@ -218,46 +230,75 @@ const Navbar = ({
 
                 {/* Mobile Auth & Profile Section (Pinned to Bottom) */}
                 <div className="border-t p-6 bg-slate-50/50 dark:bg-slate-900/50 mt-auto">
-                  {user.data ? (
+                  {userData ? (
                     <div className="flex flex-col gap-4">
                       {/* User Mini Profile Header */}
                       <div className="flex items-center gap-3 mb-2">
                         <Avatar className="h-10 w-10 border border-slate-200 dark:border-slate-700">
                           <AvatarImage
-                            src={user.data.image || ""}
-                            alt={user.data.name}
+                            src={userData.image || ""}
+                            alt={userData.name}
                           />
                           <AvatarFallback className="bg-[#FFC222] text-black font-bold">
-                            {user.data.name?.substring(0, 2).toUpperCase() ||
+                            {userData.name?.substring(0, 2).toUpperCase() ||
                               "U"}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
-                          <p className="text-sm font-semibold text-foreground">
-                            {user.data.name}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold text-foreground">
+                              {userData.name}
+                            </p>
+                            {/* PRO badge on mobile */}
+                            {role === "PROVIDER" && (
+                              <span className="bg-[#FFC222]/20 text-[#e5ae1e] text-[10px] font-bold px-1.5 py-0.5 rounded">
+                                PRO
+                              </span>
+                            )}
+                          </div>
                           <p className="text-xs text-muted-foreground line-clamp-1">
-                            {user.data.email}
+                            {userData.email}
                           </p>
                         </div>
                       </div>
 
-                      {/* Mobile Profile Links */}
+                      {/* Conditional Mobile Profile Links */}
                       <div className="flex flex-col gap-1">
-                        <Link
-                          href="/profile"
-                          className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                        >
-                          <User className="size-4 text-[#FFC222]" />
-                          Manage Profile
-                        </Link>
-                        <Link
-                          href="/orders"
-                          className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                        >
-                          <ShoppingBag className="size-4 text-[#FFC222]" />
-                          My Orders
-                        </Link>
+                        {role === "PROVIDER" ? (
+                          <>
+                            <Link
+                              href="/dashboard"
+                              className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            >
+                              <LayoutDashboard className="size-4 text-[#FFC222]" />
+                              Dashboard
+                            </Link>
+                            <Link
+                              href="/providerOrders"
+                              className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            >
+                              <ClipboardList className="size-4 text-[#FFC222]" />
+                              Incoming Orders
+                            </Link>
+                          </>
+                        ) : (
+                          <>
+                            <Link
+                              href="/profile"
+                              className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            >
+                              <User className="size-4 text-[#FFC222]" />
+                              Manage Profile
+                            </Link>
+                            <Link
+                              href="/orders"
+                              className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            >
+                              <ShoppingBag className="size-4 text-[#FFC222]" />
+                              My Orders
+                            </Link>
+                          </>
+                        )}
                       </div>
 
                       <Button

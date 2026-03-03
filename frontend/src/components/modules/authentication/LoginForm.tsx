@@ -66,7 +66,7 @@ export default function LoginPage() {
         if (userRole === "ADMIN") {
           router.push("/admin/dashboard");
         } else if (userRole === "PROVIDER") {
-          router.push("/provider/dashboard");
+          router.push("/dashboard");
         } else {
           router.push(callbackUrl || "/");
         }

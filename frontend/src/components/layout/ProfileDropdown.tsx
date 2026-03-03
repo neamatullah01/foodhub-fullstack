@@ -3,7 +3,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, ShoppingBag, Settings, LogOut } from "lucide-react";
+import {
+  User,
+  ShoppingBag,
+  Settings,
+  LogOut,
+  LayoutDashboard,
+  ClipboardList,
+} from "lucide-react"; // <-- Added new icons here
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 
@@ -21,7 +28,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export function ProfileDropdown({ user }: { user: any }) {
   const router = useRouter();
 
-  // The logout function we wrote earlier!
   const handleLogout = async () => {
     const toastId = toast.loading("Signing out...");
     try {
@@ -34,7 +40,6 @@ export function ProfileDropdown({ user }: { user: any }) {
     }
   };
 
-  // Generate initials for the avatar fallback (e.g., "John Doe" -> "JD")
   const initials = user?.name
     ? user.name
         .split(" ")
@@ -43,6 +48,9 @@ export function ProfileDropdown({ user }: { user: any }) {
         .toUpperCase()
         .substring(0, 2)
     : "U";
+
+  // Safely get the role
+  const role = user?.role?.toUpperCase();
 
   return (
     <DropdownMenu>
@@ -58,12 +66,19 @@ export function ProfileDropdown({ user }: { user: any }) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-56" align="end" forceMount>
-        {/* Header with Name and Email */}
+        {/* Header with Name, Email, and Role Badge */}
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none text-slate-900 dark:text-white">
-              {user?.name}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium leading-none text-slate-900 dark:text-white">
+                {user?.name}
+              </p>
+              {role === "PROVIDER" && (
+                <span className="bg-[#FFC222]/20 text-[#e5ae1e] text-[10px] font-bold px-1.5 py-0.5 rounded">
+                  PRO
+                </span>
+              )}
+            </div>
             <p className="text-xs leading-none text-muted-foreground">
               {user?.email}
             </p>
@@ -72,21 +87,43 @@ export function ProfileDropdown({ user }: { user: any }) {
 
         <DropdownMenuSeparator />
 
-        {/* Menu Links */}
+        {/* Dynamic Menu Links Based on Role */}
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild className="cursor-pointer">
-            <Link href="/profile">
-              <User className="mr-2 h-4 w-4" />
-              <span>Manage Profile</span>
-            </Link>
-          </DropdownMenuItem>
+          {role === "PROVIDER" ? (
+            /* --- PROVIDER LINKS --- */
+            <>
+              <DropdownMenuItem asChild className="cursor-pointer">
+                <Link href="/dashboard">
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  <span>Dashboard</span>
+                </Link>
+              </DropdownMenuItem>
 
-          <DropdownMenuItem asChild className="cursor-pointer">
-            <Link href="/orders">
-              <ShoppingBag className="mr-2 h-4 w-4" />
-              <span>My Orders</span>
-            </Link>
-          </DropdownMenuItem>
+              <DropdownMenuItem asChild className="cursor-pointer">
+                <Link href="/providerOrders">
+                  <ClipboardList className="mr-2 h-4 w-4" />
+                  <span>Incoming Orders</span>
+                </Link>
+              </DropdownMenuItem>
+            </>
+          ) : (
+            /* --- CUSTOMER LINKS --- */
+            <>
+              <DropdownMenuItem asChild className="cursor-pointer">
+                <Link href="/profile">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Manage Profile</span>
+                </Link>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem asChild className="cursor-pointer">
+                <Link href="/orders">
+                  <ShoppingBag className="mr-2 h-4 w-4" />
+                  <span>My Orders</span>
+                </Link>
+              </DropdownMenuItem>
+            </>
+          )}
 
           {/* Optional: Add Settings if needed later */}
           <DropdownMenuItem asChild className="cursor-pointer hidden">
@@ -99,7 +136,7 @@ export function ProfileDropdown({ user }: { user: any }) {
 
         <DropdownMenuSeparator />
 
-        {/* Logout Button */}
+        {/* Logout Button (Shows for everyone) */}
         <DropdownMenuItem
           onClick={handleLogout}
           className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50"

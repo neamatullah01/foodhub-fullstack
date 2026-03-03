@@ -11,10 +11,10 @@ import {
 } from "lucide-react";
 
 const sidebarLinks = [
-  { name: "Dashboard", href: "/provider/dashboard", icon: LayoutDashboard },
-  { name: "Manage Menu", href: "/provider/menu", icon: UtensilsCrossed },
-  { name: "Incoming Orders", href: "/provider/orders", icon: ClipboardList },
-  { name: "Restaurant Profile", href: "/provider/profile", icon: Store },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Manage Menu", href: "/menu", icon: UtensilsCrossed },
+  { name: "Incoming Orders", href: "/providerOrders", icon: ClipboardList },
+  { name: "Restaurant Profile", href: "/restaurantProfile", icon: Store },
 ];
 
 export function ProviderSidebar() {
@@ -22,7 +22,6 @@ export function ProviderSidebar() {
 
   return (
     <aside className="w-64 bg-slate-900 text-slate-300 hidden md:flex flex-col h-screen fixed left-0 top-0 border-r border-slate-800">
-      {/* Brand Header */}
       <div className="h-16 flex items-center px-6 border-b border-slate-800 bg-slate-950">
         <div className="flex items-center gap-2 text-white font-bold text-xl tracking-tight">
           <div className="bg-[#FFC222] text-black p-1.5 rounded-lg">
@@ -31,8 +30,6 @@ export function ProviderSidebar() {
           FoodHub <span className="text-[#FFC222]">Pro</span>
         </div>
       </div>
-
-      {/* Navigation Links */}
       <nav className="flex-1 py-6 px-4 space-y-1.5 overflow-y-auto">
         {sidebarLinks.map((link) => {
           const isActive = pathname.startsWith(link.href);
@@ -55,7 +52,6 @@ export function ProviderSidebar() {
         })}
       </nav>
 
-      {/* Footer / Back to Main App */}
       <div className="p-4 border-t border-slate-800">
         <Link
           href="/"

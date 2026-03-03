@@ -31,6 +31,15 @@ export async function getSession() {
   }
 }
 
+export async function logout() {
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete("token");
+  } catch (error) {
+    console.error("Failed to logout:", error);
+  }
+}
+
 export async function updateProfile(formData: {
   name: string;
   phone: string;

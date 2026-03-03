@@ -1,8 +1,8 @@
-import { AllProviders } from "@/components/modules/providers/AllProviders";
-import { providerService } from "@/services/provider.service";
+import { AllProviders } from "@/components/modules/provider/AllProviders";
+import { getAllProviders } from "@/services/provider.service";
 
 const ProvidersPage = async () => {
-  const response = await providerService.getAllProviders();
+  const response = await getAllProviders();
 
   const providers = response?.data?.data || [];
 

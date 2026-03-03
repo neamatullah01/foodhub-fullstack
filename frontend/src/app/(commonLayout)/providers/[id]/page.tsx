@@ -1,5 +1,5 @@
-import { ProviderProfile } from "@/components/modules/providers/ProviderProfile";
-import { providerService } from "@/services/provider.service";
+import { ProviderProfile } from "@/components/modules/provider/ProviderProfile";
+import { getProviderById } from "@/services/provider.service";
 import { notFound } from "next/navigation";
 
 const ProviderDetailsPage = async ({
@@ -10,7 +10,7 @@ const ProviderDetailsPage = async ({
   const resolvedParams = await params;
   const providerId = resolvedParams.id;
 
-  const response = await providerService.getProviderById(providerId);
+  const response = await getProviderById(providerId);
   const provider = response?.data;
 
   if (!provider) {

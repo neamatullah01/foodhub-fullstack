@@ -10,3 +10,12 @@ export interface Meal {
     restaurantName: string;
   };
 }
+
+export interface AddMeal {
+  categoryId: string;
+  name: string;
+  description: string | null;
+  price: number;
+  imageUrl: string | null;
+  isAvailable: boolean;
+}
