@@ -45,7 +45,7 @@ export function ProviderHeader({ user }: { user: any }) {
                 Manage Menu
               </Link>
               <Link
-                href="/providerOrders"
+                href="/incomingOrders"
                 className="text-slate-300 hover:text-white p-2"
               >
                 Orders
