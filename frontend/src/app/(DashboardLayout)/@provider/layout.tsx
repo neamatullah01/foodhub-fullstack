@@ -7,9 +7,9 @@ export default async function ProviderSlotLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch user data just for the Header (avatar, name, etc.)
   const { data } = await getSession();
   const user = data?.user;
+  console.log(user);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex">

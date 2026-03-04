@@ -7,11 +7,9 @@ import {
 import { ProviderOrders } from "@/components/modules/provider/orders/ProviderOrders";
 
 export default async function IncomingOrdersPage() {
-  // 1. Get current user
   const session = await getSession();
   const userId = session.data?.user?.id;
 
-  // 2. Find the matching Provider ID
   const allProvidersResponse = await getAllProviders();
   const allProviders = allProvidersResponse?.data?.data || [];
   const myProviderRecord = allProviders.find(
@@ -28,10 +26,8 @@ export default async function IncomingOrdersPage() {
     );
   }
 
-  // 3. Fetch REAL Orders for this provider
   const ordersResponse = await getProviderOrders();
-  // Safely extract the array of orders (adjust based on your exact Express response structure)
-  const initialOrders = ordersResponse.data?.data || [];
+  const initialOrders = ordersResponse?.data || [];
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -47,7 +43,6 @@ export default async function IncomingOrdersPage() {
         </p>
       </div>
 
-      {/* Pass the server-fetched orders into the interactive client component */}
       <ProviderOrders initialOrders={initialOrders} />
     </div>
   );

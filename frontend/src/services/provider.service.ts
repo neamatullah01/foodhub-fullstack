@@ -150,7 +150,7 @@ export async function updateOrderStatus(orderId: string, status: string) {
   try {
     const cookieStore = await cookies();
 
-    const res = await fetch(`${API_URL}/api/orders/${orderId}/status`, {
+    const res = await fetch(`${API_URL}/api/providers/orders/${orderId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

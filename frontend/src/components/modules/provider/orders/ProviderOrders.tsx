@@ -22,7 +22,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// Import your server action!
 import { updateOrderStatus } from "@/services/provider.service";
 
 const STATUS_OPTIONS = [
@@ -39,12 +38,12 @@ export function ProviderOrders({ initialOrders }: { initialOrders: any[] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  // Filter by Order ID or Customer Name
   const filteredOrders = orders.filter(
     (o) =>
       o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       o.customerName?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     setUpdatingId(orderId);
     const toastId = toast.loading("Updating status...");
@@ -93,7 +92,6 @@ export function ProviderOrders({ initialOrders }: { initialOrders: any[] }) {
 
   return (
     <div className="space-y-6">
-      {/* --- Search Header --- */}
       <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="relative w-full sm:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -106,7 +104,6 @@ export function ProviderOrders({ initialOrders }: { initialOrders: any[] }) {
         </div>
       </div>
 
-      {/* --- Orders Grid --- */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {filteredOrders.length === 0 ? (
           <div className="col-span-full text-center py-12 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
@@ -122,7 +119,6 @@ export function ProviderOrders({ initialOrders }: { initialOrders: any[] }) {
               key={order.id}
               className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 flex flex-col justify-between"
             >
-              {/* Order Header */}
               <div className="flex justify-between items-start border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
                 <div>
                   <h3 className="font-bold text-lg text-slate-900 dark:text-white">
@@ -147,7 +143,6 @@ export function ProviderOrders({ initialOrders }: { initialOrders: any[] }) {
                 </Badge>
               </div>
 
-              {/* Order Items */}
               <div className="space-y-2 mb-6 flex-1">
                 {order.orderItems?.map((item: any, idx: number) => (
                   <div
@@ -167,14 +162,13 @@ export function ProviderOrders({ initialOrders }: { initialOrders: any[] }) {
                 ))}
               </div>
 
-              {/* Footer: Total & Status Update */}
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
                 <div>
                   <p className="text-xs text-slate-500 font-medium mb-1">
                     Total Amount
                   </p>
                   <p className="font-bold text-xl text-[#e11d48]">
-                    ৳{order.totalAmount?.toFixed(2) || "0.00"}
+                    ৳{order.totalPrice?.toFixed(2) || "0.00"}
                   </p>
                 </div>
 
