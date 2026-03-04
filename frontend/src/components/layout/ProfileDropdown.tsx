@@ -10,7 +10,8 @@ import {
   LogOut,
   LayoutDashboard,
   ClipboardList,
-} from "lucide-react"; // <-- Added new icons here
+  Users,
+} from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 
@@ -49,7 +50,6 @@ export function ProfileDropdown({ user }: { user: any }) {
         .substring(0, 2)
     : "U";
 
-  // Safely get the role
   const role = user?.role?.toUpperCase();
 
   return (
@@ -66,16 +66,21 @@ export function ProfileDropdown({ user }: { user: any }) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-56" align="end" forceMount>
-        {/* Header with Name, Email, and Role Badge */}
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <div className="flex items-center gap-2">
               <p className="text-sm font-medium leading-none text-slate-900 dark:text-white">
                 {user?.name}
               </p>
+
               {role === "PROVIDER" && (
                 <span className="bg-[#FFC222]/20 text-[#e5ae1e] text-[10px] font-bold px-1.5 py-0.5 rounded">
                   PRO
+                </span>
+              )}
+              {role === "ADMIN" && (
+                <span className="bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 text-[10px] font-bold px-1.5 py-0.5 rounded">
+                  ADMIN
                 </span>
               )}
             </div>
@@ -87,10 +92,26 @@ export function ProfileDropdown({ user }: { user: any }) {
 
         <DropdownMenuSeparator />
 
-        {/* Dynamic Menu Links Based on Role */}
         <DropdownMenuGroup>
-          {role === "PROVIDER" ? (
-            /* --- PROVIDER LINKS --- */
+          {role === "ADMIN" && (
+            <>
+              <DropdownMenuItem asChild className="cursor-pointer">
+                <Link href="/dashboard">
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  <span>Dashboard</span>
+                </Link>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem asChild className="cursor-pointer">
+                <Link href="/users">
+                  <Users className="mr-2 h-4 w-4" />
+                  <span>Manage Users</span>
+                </Link>
+              </DropdownMenuItem>
+            </>
+          )}
+
+          {role === "PROVIDER" && (
             <>
               <DropdownMenuItem asChild className="cursor-pointer">
                 <Link href="/dashboard">
@@ -106,8 +127,9 @@ export function ProfileDropdown({ user }: { user: any }) {
                 </Link>
               </DropdownMenuItem>
             </>
-          ) : (
-            /* --- CUSTOMER LINKS --- */
+          )}
+
+          {role !== "ADMIN" && role !== "PROVIDER" && (
             <>
               <DropdownMenuItem asChild className="cursor-pointer">
                 <Link href="/profile">
@@ -125,7 +147,6 @@ export function ProfileDropdown({ user }: { user: any }) {
             </>
           )}
 
-          {/* Optional: Add Settings if needed later */}
           <DropdownMenuItem asChild className="cursor-pointer hidden">
             <Link href="/settings">
               <Settings className="mr-2 h-4 w-4" />
@@ -136,7 +157,6 @@ export function ProfileDropdown({ user }: { user: any }) {
 
         <DropdownMenuSeparator />
 
-        {/* Logout Button (Shows for everyone) */}
         <DropdownMenuItem
           onClick={handleLogout}
           className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50"

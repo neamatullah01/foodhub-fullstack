@@ -1,8 +1,7 @@
-import { NextRequest, NextResponse } from "next/server"; // Ensure Roles.customer exists here!
+import { NextRequest, NextResponse } from "next/server";
 import { Roles } from "./constants/roles";
 import { getSession } from "./services/user.service";
 
-// Note: In Next.js, this file should ideally be named `middleware.ts` at the root of your project (or inside `src/`).
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
@@ -10,7 +9,7 @@ export async function proxy(request: NextRequest) {
   const { data } = await getSession();
 
   const isAuthenticated = !!data;
-  const userRole = data?.user?.role;
+  const userRole = data?.user?.role?.toUpperCase(); // Good practice to normalize case
 
   // 2. If not logged in, redirect to login page
   if (!isAuthenticated) {
@@ -19,32 +18,69 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // 3. Define Roles
-  const isCustomer = userRole === Roles.customer;
+  // 3. Define Route Groups
+  const customerRoutes = ["/checkout", "/profile", "/orders", "/reviews"];
+  const providerRoutes = [
+    "/provider",
+    "/incomingOrders",
+    "/menu",
+    "/categories",
+  ];
+  // If admins and providers both share the "/dashboard" base URL:
+  const dashboardRoutes = ["/dashboard"];
 
-  // 4. Customer Route Protection
-  // If the user is trying to access checkout but is NOT a customer
-  if (pathname.startsWith("/checkout") && !isCustomer) {
-    // Redirect admins or providers away from the customer checkout
+  // 4. Role Booleans
+  const isCustomer =
+    userRole === Roles.customer?.toUpperCase() || userRole === "CUSTOMER";
+  const isProvider =
+    userRole === Roles.provider?.toUpperCase() || userRole === "PROVIDER";
+  const isAdmin =
+    userRole === Roles.admin?.toUpperCase() || userRole === "ADMIN";
+
+  // 5. Customer Route Protection
+  const isAttemptingCustomerRoute = customerRoutes.some((route) =>
+    pathname.startsWith(route),
+  );
+  if (isAttemptingCustomerRoute && !isCustomer) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // You can easily add your Provider and Admin checks right here later:
-  // if (pathname.startsWith("/admin-dashboard") && userRole !== Roles.admin) { ... }
-  // if (pathname.startsWith("/provider-dashboard") && userRole !== Roles.provider) { ... }
+  // 6. Provider Route Protection
+  const isAttemptingProviderRoute = providerRoutes.some((route) =>
+    pathname.startsWith(route),
+  );
+  if (isAttemptingProviderRoute && !isProvider) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  // 7. Shared Dashboard Protection (Provider & Admin only)
+  const isAttemptingDashboardRoute = dashboardRoutes.some((route) =>
+    pathname.startsWith(route),
+  );
+  if (isAttemptingDashboardRoute && !isProvider && !isAdmin) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
 
   return NextResponse.next();
 }
 
-// 5. The Matcher
-// This tells Next.js exactly which routes should trigger this file.
+// 8. The Matcher
+// Ensure ALL protected routes are listed here so Next.js knows to trigger this file!
 export const config = {
   matcher: [
-    "/checkout",
+    /* --- Customer Routes --- */
     "/checkout/:path*",
-    "/profile",
-    "/orders",
-    "/reviews",
-    // Add any other customer-only routes here, like "/profile" or "/orders"
+    "/profile/:path*",
+    "/orders/:path*",
+    "/reviews/:path*",
+
+    /* --- Provider Routes --- */
+    "/provider/:path*",
+    "/incomingOrders/:path*",
+    "/menu/:path*",
+    "/categories/:path*",
+
+    /* --- Shared Dashboard Routes --- */
+    "/dashboard/:path*",
   ],
 };

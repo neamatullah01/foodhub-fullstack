@@ -14,7 +14,7 @@ const sidebarLinks = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Manage Menu", href: "/menu", icon: UtensilsCrossed },
   { name: "Incoming Orders", href: "/incomingOrders", icon: ClipboardList },
-  { name: "Restaurant Profile", href: "/restaurantProfile", icon: Store },
+  // { name: "Restaurant Profile", href: "/restaurantProfile", icon: Store },
 ];
 
 export function ProviderSidebar() {

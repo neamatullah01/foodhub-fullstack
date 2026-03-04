@@ -9,7 +9,6 @@ export default async function ProviderSlotLayout({
 }>) {
   const { data } = await getSession();
   const user = data?.user;
-  console.log(user);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex">

@@ -64,7 +64,7 @@ export default function LoginPage() {
         toast.success("Welcome back!", { id: toastId });
 
         if (userRole === "ADMIN") {
-          router.push("/admin/dashboard");
+          router.push("/dashboard");
         } else if (userRole === "PROVIDER") {
           router.push("/dashboard");
         } else {
