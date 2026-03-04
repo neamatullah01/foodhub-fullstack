@@ -56,3 +56,28 @@ export async function updateUserStatus(userId: string, newStatus: boolean) {
     };
   }
 }
+
+export async function getAllPlatformOrders() {
+  try {
+    const cookieStore = await cookies();
+    const res = await fetch(`${API_URL}/api/admin/orders`, {
+      cache: "no-store",
+      headers: {
+        Cookie: cookieStore.toString(),
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch platform orders");
+    }
+
+    const data = await res.json();
+    return { data: data, error: null };
+  } catch (error: any) {
+    console.error("FETCH ALL ORDERS ERROR:", error);
+    return {
+      data: null,
+      error: { message: error.message || "Failed to fetch orders" },
+    };
+  }
+}

@@ -1,6 +1,6 @@
 import { AllMeals } from "@/components/modules/meals/AllMeals";
 import { MealFilters } from "@/components/modules/meals/MealFilters";
-import { categoryService } from "@/services/category.service";
+import { getAllCategories } from "@/services/category.service";
 import { mealService } from "@/services/meal.service";
 
 const MealsPage = async ({
@@ -22,7 +22,7 @@ const MealsPage = async ({
   };
 
   const { data } = await mealService.getAllMeal(query);
-  const categories = await categoryService.getCategories();
+  const categories = await getAllCategories();
   const mealsList = data?.data || [];
 
   return (

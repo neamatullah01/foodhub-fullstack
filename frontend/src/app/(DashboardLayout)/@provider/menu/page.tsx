@@ -1,5 +1,5 @@
 import { MenuManager } from "@/components/modules/provider/menu/MenuManager";
-import { categoryService } from "@/services/category.service";
+import { getAllCategories } from "@/services/category.service";
 import { getAllProviders } from "@/services/provider.service";
 import { getSession } from "@/services/user.service";
 import { Provider } from "@/types/provider.types";
@@ -8,7 +8,7 @@ import { UtensilsCrossed, AlertCircle } from "lucide-react";
 export default async function ProviderMenuPage() {
   const session = await getSession();
   const userId = session.data?.user?.id;
-  const categories = await categoryService.getCategories();
+  const categories = await getAllCategories();
 
   const allProvidersResponse = await getAllProviders();
   const allProviders = allProvidersResponse?.data?.data || [];
