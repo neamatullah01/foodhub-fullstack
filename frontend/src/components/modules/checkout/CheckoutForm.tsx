@@ -6,7 +6,7 @@ import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
 import { MapPin, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
-import { createOrder } from "@/actions/orders.action";
+import { createOrder } from "@/services/order.service";
 
 export function CheckoutForm() {
   const cart = useCart();
