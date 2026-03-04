@@ -8,6 +8,8 @@ router.get("/", categoryController.getAllCategory);
 
 router.post("/", verifyAuth(Role.ADMIN), categoryController.createCategory);
 
+router.patch("/:id", verifyAuth(Role.ADMIN), categoryController.updateCategory);
+
 router.delete(
   "/:id",
   verifyAuth(Role.ADMIN),

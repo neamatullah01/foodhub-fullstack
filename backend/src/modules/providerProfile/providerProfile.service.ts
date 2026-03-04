@@ -47,7 +47,15 @@ const getAllProvider = async ({
     skip,
     take: limit,
     include: {
+      _count: {
+        select: {
+          meals: true,
+        },
+      },
       meals: true,
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 
@@ -70,6 +78,14 @@ const getProviderById = async (id: string) => {
   return await prisma.providerProfile.findUnique({
     where: {
       id,
+    },
+    include: {
+      _count: {
+        select: {
+          meals: true,
+        },
+      },
+      meals: true,
     },
   });
 };
@@ -175,7 +191,6 @@ const getIncomingOrders = async (userId: string) => {
   return await prisma.order.findMany({
     where: {
       providerId: providerData.id,
-      status: "PENDING",
     },
     include: {
       orderItems: {
@@ -185,7 +200,7 @@ const getIncomingOrders = async (userId: string) => {
         select: { name: true },
       },
     },
-    orderBy: { createdAt: "asc" },
+    orderBy: { createdAt: "desc" },
   });
 };
 

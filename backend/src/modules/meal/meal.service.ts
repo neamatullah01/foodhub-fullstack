@@ -7,6 +7,7 @@ const getAllMeal = async ({
   limit,
   sortBy,
   sortOrder,
+  categoryId,
 }: {
   search: string | undefined;
   page: number;
@@ -14,11 +15,16 @@ const getAllMeal = async ({
   limit: number;
   sortBy: string;
   sortOrder: string;
+  categoryId: string | undefined;
 }) => {
   const where: any = {};
 
+  if (categoryId) {
+    where.categoryId = categoryId;
+  }
+
   if (search && typeof search === "string") {
-    const category = await prisma.category.findFirst({
+    const meal = await prisma.meal.findMany({
       where: {
         name: {
           contains: search,
@@ -27,8 +33,8 @@ const getAllMeal = async ({
       },
     });
 
-    if (category) {
-      where.categoryId = category.id;
+    if (meal) {
+      where.id = { in: meal.map((m) => m.id) };
     }
   }
   const allMeal = await prisma.meal.findMany({
@@ -37,6 +43,9 @@ const getAllMeal = async ({
     where,
     orderBy: {
       [sortBy]: sortOrder,
+    },
+    include: {
+      provider: true,
     },
   });
 

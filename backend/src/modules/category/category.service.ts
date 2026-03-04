@@ -5,8 +5,30 @@ const createCategory = async (name: string) => {
     data: { name },
   });
 };
+
 const getAllCategory = async () => {
   return await prisma.category.findMany();
+};
+
+const updateCategory = async (id: string, name: string) => {
+  const categoryData = await prisma.category.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!categoryData) {
+    throw new Error("Your provided input is invalid!");
+  }
+
+  return await prisma.category.update({
+    where: {
+      id: categoryData.id,
+    },
+    data: {
+      name,
+    },
+  });
 };
 
 const deleteCategory = async (id: string) => {
@@ -15,6 +37,7 @@ const deleteCategory = async (id: string) => {
       id,
     },
   });
+
   if (!categoryData) {
     throw new Error("Your provided input is invalid!");
   }
@@ -29,5 +52,6 @@ const deleteCategory = async (id: string) => {
 export const categoryServices = {
   createCategory,
   getAllCategory,
+  updateCategory,
   deleteCategory,
 };

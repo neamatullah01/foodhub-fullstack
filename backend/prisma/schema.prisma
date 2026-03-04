@@ -33,6 +33,8 @@ model User {
   reviews         Review[]
   emailVerified   Boolean          @default(false)
   image           String?
+  phone           String?
+  address         String?
   sessions        Session[]
   accounts        Account[]
 
