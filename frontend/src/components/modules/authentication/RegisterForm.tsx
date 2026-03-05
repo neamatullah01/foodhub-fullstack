@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, ChefHat, User, Loader2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -23,6 +23,7 @@ const formSchema = z.object({
 });
 
 export default function RegisterPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [role, setRole] = useState("CUSTOMER");
@@ -51,12 +52,16 @@ export default function RegisterPage() {
       const toastId = toast.loading("Creating account...");
 
       try {
+        // 1. Determine the correct destination
+        const destinationUrl =
+          role === "PROVIDER" ? "/setup-profile" : callbackUrl;
+
         const { data, error } = await authClient.signUp.email({
           email: value.email,
           password: value.password,
           name: value.name,
           role: role === "PROVIDER" ? "PROVIDER" : "CUSTOMER",
-          callbackURL: callbackUrl,
+          callbackURL: destinationUrl, // <-- Pass the dynamic URL here
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any);
 
@@ -66,6 +71,9 @@ export default function RegisterPage() {
         }
 
         toast.success("Account created successfully!", { id: toastId });
+
+        // 2. Force the router push just in case the callbackURL doesn't auto-redirect
+        router.push(destinationUrl);
       } catch (err) {
         toast.error("Something went wrong. Please try again.", { id: toastId });
       }

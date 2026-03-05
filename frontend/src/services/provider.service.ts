@@ -7,6 +7,44 @@ import { AddMeal } from "@/types/meal.types";
 
 const API_URL = env.API_URL;
 
+export interface CreateProviderPayload {
+  restaurantName: string;
+  description: string;
+  address: string;
+  phone: string;
+  imageUrl: string;
+}
+
+export async function createProviderProfile(payload: CreateProviderPayload) {
+  try {
+    const cookieStore = await cookies();
+    const res = await fetch(`${API_URL}/api/providers`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieStore.toString(),
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      throw new Error(
+        errorData?.message || "Failed to create provider profile.",
+      );
+    }
+
+    const data = await res.json();
+    return { data: data, error: null };
+  } catch (error: any) {
+    console.error("CREATE PROVIDER ERROR:", error);
+    return {
+      data: null,
+      error: { message: error.message || "Something went wrong while saving." },
+    };
+  }
+}
+
 export async function getAllProviders(limit: number = 10) {
   try {
     const res = await fetch(`${API_URL}/api/providers?limit=${limit}`, {

@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { redirect } from "next/navigation";
 import { ProviderHeader } from "@/components/modules/provider/ProviderHeader";
 import { ProviderSidebar } from "@/components/modules/provider/ProviderSidebar";
 import { getSession } from "@/services/user.service";
+import { getAllProviders } from "@/services/provider.service";
 
 export default async function ProviderSlotLayout({
   children,
@@ -9,6 +12,20 @@ export default async function ProviderSlotLayout({
 }>) {
   const { data } = await getSession();
   const user = data?.user;
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const providersResponse = await getAllProviders();
+  const allProviders =
+    providersResponse?.data?.data || providersResponse?.data || [];
+
+  const hasProfile = allProviders.find((p: any) => p.userId === user.id);
+
+  if (!hasProfile) {
+    redirect("/setup-profile");
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex">

@@ -66,6 +66,7 @@ export const config = {
     "/orders/:path*",
     "/reviews/:path*",
     "/provider/:path*",
+    "/setup-profile",
     "/incomingOrders/:path*",
     "/menu/:path*",
     "/users/:path*",
