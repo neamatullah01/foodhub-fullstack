@@ -90,14 +90,17 @@ export function AllMeals({ meals }: { meals: Meal[] }) {
                         restaurantName: meal.provider.restaurantName,
                       });
                     }}
-                    className="rounded-full bg-[#e11d48] hover:bg-[#be123c] text-white border-none shadow-md transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed px-6"
+                    className="rounded-full bg-[#e11d48] hover:bg-[#be123c] text-white border-none shadow-xl tracking-wide transition-all transform active:scale-95 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed px-6 cursor-pointer"
                   >
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     {meal.isAvailable ? "Add to cart" : "Out of stock"}
                   </Button>
                 </div>
               </div>
-              <div className="sm:w-[220px] bg-slate-50 dark:bg-slate-950 p-6 flex flex-col items-center justify-center border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800">
+              <div
+                onClick={() => router.push(`/providers/${meal.provider.id}`)}
+                className="sm:w-[220px] bg-slate-50 dark:bg-slate-950 p-6 flex flex-col items-center justify-center border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 cursor-pointer"
+              >
                 {meal.provider.imageUrl ? (
                   <Image
                     src={providerAvatar}

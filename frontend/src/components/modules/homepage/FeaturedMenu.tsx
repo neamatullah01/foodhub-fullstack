@@ -35,7 +35,7 @@ export function FeaturedMenu({ items }: { items: Meal[] }) {
             items.map((item) => (
               <div
                 key={item.id}
-                className="group relative h-[400px] w-full rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-all duration-300"
+                className="group relative h-[400px] w-full rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
               >
                 <div
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
@@ -67,7 +67,6 @@ export function FeaturedMenu({ items }: { items: Meal[] }) {
                         return;
                       }
 
-                     
                       cart.addItem({
                         id: item.id,
                         name: item.name,
@@ -77,7 +76,7 @@ export function FeaturedMenu({ items }: { items: Meal[] }) {
                         restaurantName: item.provider.restaurantName,
                       });
                     }}
-                    className="rounded-full bg-[#e11d48] hover:bg-[#be123c] text-white border-none shadow-md transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed px-6"
+                    className="rounded-full bg-[#e11d48] hover:bg-[#be123c] text-white shadow-xl tracking-wide transition-all transform active:scale-95 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed px-6 cursor-pointer"
                   >
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     {item.isAvailable ? "Add to cart" : "Out of stock"}
@@ -92,16 +91,15 @@ export function FeaturedMenu({ items }: { items: Meal[] }) {
           )}
         </div>
         <div className="flex justify-center">
-          <Link href="/meals">
-            <Button
-              variant="outline"
-              size="lg"
-              className="rounded-full px-8 border-primary text-primary hover:bg-primary hover:text-white transition-colors text-lg h-14"
-            >
+          <Button
+            asChild
+            className="group rounded-full bg-[#FFC222] text-black px-10 py-6 font-bold text-base shadow-lg transition-all duration-300 ease-out hover:bg-[#ffcd44] hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(255,194,34,0.7)] active:scale-95 active:translate-y-0"
+          >
+            <Link href="/meals" className="flex items-center gap-2">
               View All Meals
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
+              <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1.5" />
+            </Link>
+          </Button>
         </div>
       </div>
     </section>

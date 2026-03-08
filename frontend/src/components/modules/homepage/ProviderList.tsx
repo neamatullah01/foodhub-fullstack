@@ -89,11 +89,15 @@ export function ProviderList({ providers }: { providers: Provider[] }) {
         </div>
 
         <div className="flex justify-center">
-          <Link href="/providers">
-            <Button className="rounded-full bg-[#FFC222] hover:bg-[#ffcd44] text-black font-bold px-10 py-6 text-base shadow-lg hover:shadow-xl transition-all">
+          <Button
+            asChild
+            className="group rounded-full bg-[#FFC222] text-black px-10 py-6 font-bold text-base shadow-lg transition-all duration-300 ease-out hover:bg-[#ffcd44] hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(255,194,34,0.7)] active:scale-95 active:translate-y-0"
+          >
+            <Link href="/providers" className="flex items-center gap-2">
               View More
-            </Button>
-          </Link>
+              <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1.5" />
+            </Link>
+          </Button>
         </div>
       </div>
     </section>
