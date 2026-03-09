@@ -83,8 +83,8 @@ export function CategoryCarousel({
             })}
           </CarouselContent>
           <div className="flex justify-center gap-4 mt-8">
-            <CarouselPrevious className="static translate-y-0 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border-slate-200 dark:border-slate-700 hover:bg-primary hover:text-white dark:hover:bg-primary h-12 w-12" />
-            <CarouselNext className="static translate-y-0 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border-slate-200 dark:border-slate-700 hover:bg-primary hover:text-white dark:hover:bg-primary h-12 w-12" />
+            <CarouselPrevious className="static translate-y-0 bg-white dark:bg-[#FFC222] text-slate-900 dark:text-white border-slate-200 hover:bg-[#FFC222] hover:text-black dark:hover:bg-primary h-12 w-12 cursor-pointer" />
+            <CarouselNext className="static translate-y-0 bg-white dark:bg-[#FFC222] text-slate-900 dark:text-white border-slate-200 dark:border-slate-700 hover:bg-[#FFC222] hover:text-black dark:hover:bg-primary h-12 w-12 cursor-pointer" />
           </div>
         </Carousel>
       </div>

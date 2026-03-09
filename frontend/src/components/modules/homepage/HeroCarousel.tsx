@@ -3,6 +3,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import Image from "next/image";
+import Link from "next/link";
 
 const SLIDES = [
   {
@@ -77,13 +78,19 @@ export default function HeroCarousel() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 z-50">
-                  <button className="swiper-no-swiping bg-[#e63e3e] hover:bg-[#c92d2d] text-white px-10 py-4 rounded-full font-bold uppercase tracking-wide transition-all transform hover:scale-105 shadow-xl cursor-pointer">
+                  <Link
+                    href="/providers"
+                    className="inline-block text-center swiper-no-swiping bg-[#e63e3e] hover:bg-[#c92d2d] text-white px-10 py-4 rounded-full font-bold uppercase tracking-wide transition-all transform hover:scale-105 shadow-xl cursor-pointer"
+                  >
                     Order Now
-                  </button>
+                  </Link>
 
-                  <button className="swiper-no-swiping bg-transparent border-2 border-white hover:bg-white hover:text-[#e63e3e] text-white px-10 py-4 rounded-full font-bold uppercase tracking-wide transition-all cursor-pointer">
+                  <Link
+                    href="/meals"
+                    className="inline-block text-center swiper-no-swiping bg-transparent border-2 border-white hover:bg-white hover:text-[#e63e3e] text-white px-10 py-4 rounded-full font-bold uppercase tracking-wide transition-all cursor-pointer"
+                  >
                     View Menu
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>

@@ -14,7 +14,6 @@ import {
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import {
@@ -105,15 +104,12 @@ const Navbar = ({
   className,
   user,
 }: NavbarProps) => {
-  const router = useRouter();
-
   const handleLogout = async () => {
     const toastId = toast.loading("Signing out...");
     try {
       await authClient.signOut();
       toast.success("Logged out successfully", { id: toastId });
-      router.refresh();
-      router.push("/");
+      window.location.href = "/";
     } catch (error) {
       toast.error("Failed to log out. Please try again.", { id: toastId });
     }
@@ -130,7 +126,6 @@ const Navbar = ({
       )}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* --- DESKTOP NAV --- */}
         <nav className="hidden h-16 items-center justify-between lg:flex">
           <div className="flex items-center gap-8">
             <Link
@@ -155,7 +150,6 @@ const Navbar = ({
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Show Cart for Customers only */}
             {role !== "PROVIDER" && role !== "ADMIN" && <CartSheet />}
 
             <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
@@ -193,7 +187,6 @@ const Navbar = ({
           </div>
         </nav>
 
-        {/* --- MOBILE NAV --- */}
         <div className="flex h-16 items-center justify-between lg:hidden">
           <Link href={logo.url} className="flex items-center gap-2">
             <div className="flex size-8 items-center justify-center rounded-lg bg-[#FFC222] text-black shadow-sm">
@@ -235,7 +228,6 @@ const Navbar = ({
                   </SheetTitle>
                 </SheetHeader>
 
-                {/* Mobile Menu Links */}
                 <div className="flex-1 overflow-y-auto p-6">
                   <Accordion
                     type="single"
@@ -246,11 +238,9 @@ const Navbar = ({
                   </Accordion>
                 </div>
 
-                {/* Mobile Auth & Profile Section (Pinned to Bottom) */}
                 <div className="border-t border-slate-100 dark:border-slate-800/50 p-6 bg-slate-50 dark:bg-slate-900/20 mt-auto">
                   {userData ? (
                     <div className="flex flex-col gap-5">
-                      {/* User Mini Profile Header */}
                       <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
                         <Avatar className="h-10 w-10 border border-slate-100 dark:border-slate-700">
                           <AvatarImage
@@ -284,7 +274,6 @@ const Navbar = ({
                         </div>
                       </div>
 
-                      {/* Conditional Mobile Profile Links */}
                       <div className="flex flex-col gap-1">
                         {role === "PROVIDER" && (
                           <>
@@ -358,8 +347,6 @@ const Navbar = ({
     </section>
   );
 };
-
-// --- Helper Functions ---
 
 const renderMenuItem = (item: MenuItem) => {
   if (item.items) {

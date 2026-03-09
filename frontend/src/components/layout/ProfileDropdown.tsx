@@ -2,7 +2,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   User,
   ShoppingBag,
@@ -27,15 +26,12 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function ProfileDropdown({ user }: { user: any }) {
-  const router = useRouter();
-
   const handleLogout = async () => {
     const toastId = toast.loading("Signing out...");
     try {
       await authClient.signOut();
       toast.success("Logged out successfully", { id: toastId });
-      router.refresh();
-      router.push("/");
+      window.location.href = "/";
     } catch (error) {
       toast.error("Failed to log out. Please try again.", { id: toastId });
     }
