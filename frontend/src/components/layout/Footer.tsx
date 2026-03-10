@@ -17,12 +17,11 @@ export function Footer() {
   return (
     <footer className="bg-slate-50 dark:bg-slate-950 pt-16 pb-8 transition-colors duration-300">
       <div className="container mx-auto px-4">
-        {/* --- Top Section: Grid Layout --- */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          {/* 1. Brand & Description */}
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <span className="text-[#e63e3e]">Food</span>Hub
+              <span className="text-[#e63e3e]">Food</span>
+              <span>Hub</span>
             </h2>
             <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
               Delicious meals delivered to your doorstep. We connect you with

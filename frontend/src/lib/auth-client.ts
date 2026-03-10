@@ -1,7 +1,10 @@
 import { createAuthClient } from "better-auth/react";
+
 export const authClient = createAuthClient({
-  /** The base URL of the server (optional if you're using the same domain) */
-  baseURL: "http://localhost:5000",
+  baseURL: typeof window !== "undefined" ? window.location.origin : "",
+  fetchOptions: {
+    credentials: "include",
+  },
 });
 
 export type CustomUser = {
@@ -12,5 +15,5 @@ export type CustomUser = {
   image?: string | null;
   createdAt: Date;
   updatedAt: Date;
-  role: "CUSTOMER" | "PROVIDER" | "ADMIN"; // Add your custom field here!
+  role: "CUSTOMER" | "PROVIDER" | "ADMIN";
 };

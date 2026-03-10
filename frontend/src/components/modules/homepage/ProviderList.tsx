@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowDown, ArrowRight, MapPin, Phone, Utensils } from "lucide-react";
+import { ArrowRight, MapPin, Phone, Utensils } from "lucide-react";
 import { Provider } from "@/types/provider.types";
 import Link from "next/link";
 

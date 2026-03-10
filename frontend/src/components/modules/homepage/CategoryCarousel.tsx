@@ -33,7 +33,7 @@ export function CategoryCarousel({
   );
 
   return (
-    <section className="w-full bg-slate-50/50 dark:bg-slate-950 py-12 -mt-12 transition-colors duration-300">
+    <section className="w-full bg-white dark:bg-slate-950 py-12 -mt-12 transition-colors duration-300">
       <div className="text-center mb-10 relative z-10">
         <h3 className="text-[#e63e3e] text-2xl font-handwriting italic mb-2">
           Choose your flavor

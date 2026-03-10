@@ -17,7 +17,7 @@ export default async function Home() {
     <div className="overflow-hidden">
       <HeroCarousel />
 
-      <div className="flex flex-col gap-12 md:gap-24 py-12">
+      <div className="flex flex-col">
         <ScrollAnimate direction="up">
           <CategoryCarousel categories={categories.data} />
         </ScrollAnimate>
