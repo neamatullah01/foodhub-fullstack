@@ -109,7 +109,7 @@ npm install
 touch .env
 ```
 
-## Add the following to your backend/.env file:
+Add the following to your backend/.env file:
 
 ```bash
 # Database connection string
@@ -123,7 +123,7 @@ BETTER_AUTH_URL="http://localhost:5000"
 BETTER_AUTH_SECRET="generate-a-random-secret-key-here"
 ```
 
-## Run database migrations and start the server:
+Run database migrations and start the server:
 
 ```bash
 # Generate Prisma Client and push the schema to your database
@@ -148,7 +148,7 @@ npm install
 touch .env.local
 ```
 
-## Add the following to your frontend/.env.local file:
+Add the following to your frontend/.env.local file:
 
 ```bash
 # URL of your locally running backend API
