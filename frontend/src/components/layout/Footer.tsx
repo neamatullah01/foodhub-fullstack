@@ -28,7 +28,6 @@ export function Footer() {
               the best local chefs and restaurants for fresh, homemade food.
             </p>
 
-            {/* Social Icons */}
             <div className="flex gap-4 pt-2">
               {[Facebook, Instagram, Twitter].map((Icon, i) => (
                 <div
@@ -41,7 +40,6 @@ export function Footer() {
             </div>
           </div>
 
-          {/* 2. Quick Links */}
           <div>
             <h3 className="font-bold text-slate-900 dark:text-white mb-6">
               Quick Links
@@ -62,7 +60,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* 3. Contact Info */}
           <div>
             <h3 className="font-bold text-slate-900 dark:text-white mb-6">
               Contact Us
@@ -83,7 +80,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* 4. Newsletter */}
           <div>
             <h3 className="font-bold text-slate-900 dark:text-white mb-6">
               Stay Updated
@@ -105,7 +101,6 @@ export function Footer() {
 
         <Separator className="bg-slate-200 dark:bg-slate-800 mb-8" />
 
-        {/* --- Bottom Section: Copyright --- */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
           <p>© 2026 FoodHub. All rights reserved.</p>
           <div className="flex gap-6">

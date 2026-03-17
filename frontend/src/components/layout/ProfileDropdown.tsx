@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import {
   User,
   ShoppingBag,
@@ -26,6 +27,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function ProfileDropdown({ user }: { user: any }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   const handleLogout = async () => {
     const toastId = toast.loading("Signing out...");
     try {
@@ -49,118 +52,124 @@ export function ProfileDropdown({ user }: { user: any }) {
   const role = user?.role?.toUpperCase();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button className="rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring transition-transform active:scale-95">
-          <Avatar className="h-10 w-10 border-2 border-slate-100 dark:border-slate-800 hover:border-[#FFC222] transition-colors">
-            <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
-            <AvatarFallback className="bg-[#FFC222] text-black font-bold">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-        </button>
-      </DropdownMenuTrigger>
+    <div
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+        <DropdownMenuTrigger asChild>
+          {/* ADDED: cursor-pointer to the trigger button */}
+          <button className="cursor-pointer rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring transition-transform active:scale-95">
+            <Avatar className="h-10 w-10 border-2 border-slate-100 dark:border-slate-800 hover:border-[#FFC222] transition-colors">
+              <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
+              <AvatarFallback className="bg-[#FFC222] text-black font-bold">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          </button>
+        </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-medium leading-none text-slate-900 dark:text-white">
-                {user?.name}
+        <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium leading-none text-slate-900 dark:text-white">
+                  {user?.name}
+                </p>
+
+                {role === "PROVIDER" && (
+                  <span className="bg-[#FFC222]/20 text-[#e5ae1e] text-[10px] font-bold px-1.5 py-0.5 rounded">
+                    PRO
+                  </span>
+                )}
+                {role === "ADMIN" && (
+                  <span className="bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 text-[10px] font-bold px-1.5 py-0.5 rounded">
+                    ADMIN
+                  </span>
+                )}
+              </div>
+              <p className="text-xs leading-none text-muted-foreground">
+                {user?.email}
               </p>
-
-              {role === "PROVIDER" && (
-                <span className="bg-[#FFC222]/20 text-[#e5ae1e] text-[10px] font-bold px-1.5 py-0.5 rounded">
-                  PRO
-                </span>
-              )}
-              {role === "ADMIN" && (
-                <span className="bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 text-[10px] font-bold px-1.5 py-0.5 rounded">
-                  ADMIN
-                </span>
-              )}
             </div>
-            <p className="text-xs leading-none text-muted-foreground">
-              {user?.email}
-            </p>
-          </div>
-        </DropdownMenuLabel>
+          </DropdownMenuLabel>
 
-        <DropdownMenuSeparator />
+          <DropdownMenuSeparator />
 
-        <DropdownMenuGroup>
-          {role === "ADMIN" && (
-            <>
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link href="/dashboard">
-                  <LayoutDashboard className="mr-2 h-4 w-4" />
-                  <span>Dashboard</span>
-                </Link>
-              </DropdownMenuItem>
+          <DropdownMenuGroup>
+            {role === "ADMIN" && (
+              <>
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link href="/dashboard">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    <span>Dashboard</span>
+                  </Link>
+                </DropdownMenuItem>
 
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link href="/users">
-                  <Users className="mr-2 h-4 w-4" />
-                  <span>Manage Users</span>
-                </Link>
-              </DropdownMenuItem>
-            </>
-          )}
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link href="/users">
+                    <Users className="mr-2 h-4 w-4" />
+                    <span>Manage Users</span>
+                  </Link>
+                </DropdownMenuItem>
+              </>
+            )}
 
-          {role === "PROVIDER" && (
-            <>
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link href="/dashboard">
-                  <LayoutDashboard className="mr-2 h-4 w-4" />
-                  <span>Dashboard</span>
-                </Link>
-              </DropdownMenuItem>
+            {role === "PROVIDER" && (
+              <>
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link href="/dashboard">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    <span>Dashboard</span>
+                  </Link>
+                </DropdownMenuItem>
 
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link href="/incomingOrders">
-                  <ClipboardList className="mr-2 h-4 w-4" />
-                  <span>Incoming Orders</span>
-                </Link>
-              </DropdownMenuItem>
-            </>
-          )}
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link href="/incomingOrders">
+                    <ClipboardList className="mr-2 h-4 w-4" />
+                    <span>Incoming Orders</span>
+                  </Link>
+                </DropdownMenuItem>
+              </>
+            )}
 
-          {role !== "ADMIN" && role !== "PROVIDER" && (
-            <>
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link href="/profile">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Manage Profile</span>
-                </Link>
-              </DropdownMenuItem>
+            {role !== "ADMIN" && role !== "PROVIDER" && (
+              <>
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link href="/profile">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Manage Profile</span>
+                  </Link>
+                </DropdownMenuItem>
 
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link href="/orders">
-                  <ShoppingBag className="mr-2 h-4 w-4" />
-                  <span>My Orders</span>
-                </Link>
-              </DropdownMenuItem>
-            </>
-          )}
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link href="/orders">
+                    <ShoppingBag className="mr-2 h-4 w-4" />
+                    <span>My Orders</span>
+                  </Link>
+                </DropdownMenuItem>
+              </>
+            )}
 
-          <DropdownMenuItem asChild className="cursor-pointer hidden">
-            <Link href="/settings">
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-            </Link>
+            <DropdownMenuItem asChild className="cursor-pointer hidden">
+              <Link href="/settings">
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuItem
+            onClick={handleLogout}
+            className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Log out</span>
           </DropdownMenuItem>
-        </DropdownMenuGroup>
-
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem
-          onClick={handleLogout}
-          className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50"
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }

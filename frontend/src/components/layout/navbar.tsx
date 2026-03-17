@@ -125,12 +125,12 @@ const Navbar = ({
         className,
       )}
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-16">
         <nav className="hidden h-16 items-center justify-between lg:flex">
           <div className="flex items-center gap-8">
             <Link
               href={logo.url}
-              className="flex items-center gap-2 group transition-opacity hover:opacity-90"
+              className="flex items-center gap-2 group transition-opacity hover:opacity-90 cursor-pointer"
             >
               <div className="flex size-9 items-center justify-center rounded-xl bg-[#FFC222] text-black shadow-sm">
                 <UtensilsCrossed className="size-5" />
@@ -158,7 +158,7 @@ const Navbar = ({
               asChild
               size="icon"
               variant="ghost"
-              className="rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
             >
               <ModeToggle />
             </Button>
@@ -172,13 +172,13 @@ const Navbar = ({
                 <Button
                   asChild
                   variant="ghost"
-                  className="font-medium hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full px-5"
+                  className="font-medium hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full px-5 cursor-pointer"
                 >
                   <Link href={auth.login.url}>{auth.login.title}</Link>
                 </Button>
                 <Button
                   asChild
-                  className="bg-[#FFC222] text-black hover:bg-[#e5ae1e] font-bold rounded-full px-6 shadow-sm transition-transform active:scale-95"
+                  className="bg-[#FFC222] text-black hover:bg-[#e5ae1e] font-bold rounded-full px-6 shadow-sm transition-transform active:scale-95 cursor-pointer"
                 >
                   <Link href={auth.signup.url}>{auth.signup.title}</Link>
                 </Button>
@@ -188,7 +188,10 @@ const Navbar = ({
         </nav>
 
         <div className="flex h-16 items-center justify-between lg:hidden">
-          <Link href={logo.url} className="flex items-center gap-2">
+          <Link
+            href={logo.url}
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <div className="flex size-8 items-center justify-center rounded-lg bg-[#FFC222] text-black shadow-sm">
               <UtensilsCrossed className="size-4" />
             </div>
@@ -205,7 +208,7 @@ const Navbar = ({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                 >
                   <Menu className="size-6 text-slate-700 dark:text-slate-300" />
                 </Button>
@@ -217,7 +220,10 @@ const Navbar = ({
               >
                 <SheetHeader className="p-6 border-b border-slate-100 dark:border-slate-800/50 text-left">
                   <SheetTitle>
-                    <Link href={logo.url} className="flex items-center gap-2">
+                    <Link
+                      href={logo.url}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
                       <div className="flex size-8 items-center justify-center rounded-lg bg-[#FFC222] text-black shadow-sm">
                         <UtensilsCrossed className="size-4" />
                       </div>
@@ -274,16 +280,19 @@ const Navbar = ({
                         </div>
                       </div>
 
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col gap-3 mt-2">
                         {role === "PROVIDER" && (
                           <>
-                            <Link href="/dashboard" className="mobile-nav-link">
+                            <Link
+                              href="/dashboard"
+                              className="flex items-center gap-3 mobile-nav-link cursor-pointer"
+                            >
                               <LayoutDashboard className="size-4 text-[#FFC222]" />
                               Dashboard
                             </Link>
                             <Link
                               href="/incomingOrders"
-                              className="mobile-nav-link"
+                              className="flex items-center gap-3 mobile-nav-link cursor-pointer"
                             >
                               <ClipboardList className="size-4 text-[#FFC222]" />
                               Incoming Orders
@@ -292,7 +301,10 @@ const Navbar = ({
                         )}
                         {role === "ADMIN" && (
                           <>
-                            <Link href="/dashboard" className="mobile-nav-link">
+                            <Link
+                              href="/dashboard"
+                              className="flex items-center gap-3 mobile-nav-link cursor-pointer"
+                            >
                               <ShieldCheck className="size-4 text-[#FFC222]" />
                               Admin Dashboard
                             </Link>
@@ -300,11 +312,17 @@ const Navbar = ({
                         )}
                         {role !== "PROVIDER" && role !== "ADMIN" && (
                           <>
-                            <Link href="/profile" className="mobile-nav-link">
+                            <Link
+                              href="/profile"
+                              className="flex items-center gap-3 mobile-nav-link cursor-pointer"
+                            >
                               <User className="size-4 text-[#FFC222]" />
                               Manage Profile
                             </Link>
-                            <Link href="/orders" className="mobile-nav-link">
+                            <Link
+                              href="/orders"
+                              className="flex items-center gap-3 mobile-nav-link cursor-pointer"
+                            >
                               <ShoppingBag className="size-4 text-[#FFC222]" />
                               My Orders
                             </Link>
@@ -315,7 +333,7 @@ const Navbar = ({
                       <Button
                         onClick={handleLogout}
                         variant="outline"
-                        className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 dark:border-red-900/30 dark:hover:bg-red-950/30 rounded-xl"
+                        className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 dark:border-red-900/30 dark:hover:bg-red-950/30 rounded-xl cursor-pointer mt-2"
                       >
                         <LogOut className="mr-2 h-4 w-4" />
                         Log out
@@ -326,13 +344,13 @@ const Navbar = ({
                       <Button
                         asChild
                         variant="outline"
-                        className="w-full rounded-xl border-slate-200 dark:border-slate-800"
+                        className="w-full rounded-xl border-slate-200 dark:border-slate-800 cursor-pointer"
                       >
                         <Link href={auth.login.url}>{auth.login.title}</Link>
                       </Button>
                       <Button
                         asChild
-                        className="w-full bg-[#FFC222] text-black hover:bg-[#e5ae1e] font-bold rounded-xl shadow-sm"
+                        className="w-full bg-[#FFC222] text-black hover:bg-[#e5ae1e] font-bold rounded-xl shadow-sm cursor-pointer"
                       >
                         <Link href={auth.signup.url}>{auth.signup.title}</Link>
                       </Button>
@@ -352,7 +370,7 @@ const renderMenuItem = (item: MenuItem) => {
   if (item.items) {
     return (
       <NavigationMenuItem key={item.title}>
-        <NavigationMenuTrigger className="bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 data-[state=open]:bg-slate-100 dark:data-[state=open]:bg-slate-800 rounded-full px-4 font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors">
+        <NavigationMenuTrigger className="bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 data-[state=open]:bg-slate-100 dark:data-[state=open]:bg-slate-800 rounded-full px-4 font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer">
           {item.title}
         </NavigationMenuTrigger>
         <NavigationMenuContent>
@@ -377,7 +395,7 @@ const renderMenuItem = (item: MenuItem) => {
           href={item.url}
           className={cn(
             navigationMenuTriggerStyle(),
-            "bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 rounded-full px-4 font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors",
+            "bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 rounded-full px-4 font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer",
           )}
         >
           {item.title}
@@ -391,7 +409,7 @@ const renderMobileMenuItem = (item: MenuItem) => {
   if (item.items) {
     return (
       <AccordionItem key={item.title} value={item.title} className="border-b-0">
-        <AccordionTrigger className="text-base font-semibold text-slate-800 dark:text-slate-200 hover:text-[#FFC222] hover:no-underline transition-colors py-2">
+        <AccordionTrigger className="text-base font-semibold text-slate-800 dark:text-slate-200 hover:text-[#FFC222] hover:no-underline transition-colors py-2 cursor-pointer">
           {item.title}
         </AccordionTrigger>
         <AccordionContent className="mt-1 flex flex-col gap-1 pl-4 border-l-2 border-slate-100 dark:border-slate-800 ml-2">
@@ -399,7 +417,7 @@ const renderMobileMenuItem = (item: MenuItem) => {
             <Link
               key={subItem.title}
               href={subItem.url}
-              className="flex items-center gap-3 rounded-lg p-3 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white transition-all"
+              className="flex items-center gap-3 rounded-lg p-3 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer"
             >
               {subItem.icon && (
                 <span className="text-[#FFC222]">{subItem.icon}</span>
@@ -416,7 +434,7 @@ const renderMobileMenuItem = (item: MenuItem) => {
     <Link
       key={item.title}
       href={item.url}
-      className="block py-2 text-base font-semibold text-slate-800 dark:text-slate-200 hover:text-[#FFC222] transition-colors"
+      className="block py-2 text-base font-semibold text-slate-800 dark:text-slate-200 hover:text-[#FFC222] transition-colors cursor-pointer"
     >
       {item.title}
     </Link>
@@ -427,7 +445,7 @@ const SubMenuLink = ({ item }: { item: MenuItem }) => {
   return (
     <Link
       href={item.url}
-      className="flex select-none gap-4 rounded-xl p-4 leading-none no-underline transition-all outline-none hover:bg-slate-50 dark:hover:bg-slate-900 hover:shadow-sm focus:bg-slate-50 dark:focus:bg-slate-900 group"
+      className="flex select-none gap-4 rounded-xl p-4 leading-none no-underline transition-all outline-none hover:bg-slate-50 dark:hover:bg-slate-900 hover:shadow-sm focus:bg-slate-50 dark:focus:bg-slate-900 group cursor-pointer"
     >
       {item.icon && (
         <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#FFC222]/10 text-[#e5ae1e] group-hover:bg-[#FFC222] group-hover:text-black transition-colors">

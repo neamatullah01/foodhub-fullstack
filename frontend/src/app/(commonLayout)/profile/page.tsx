@@ -1,14 +1,9 @@
-import { authClient } from "@/lib/auth-client";
 import { ProfileForm } from "@/components/modules/profile/ProfileForm";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getSession } from "@/services/user.service";
 
 export default async function ProfilePage() {
-  const session = await authClient.getSession({
-    fetchOptions: {
-      headers: await headers(),
-    },
-  });
+  const session = await getSession();
 
   if (!session.data) {
     redirect("/login");

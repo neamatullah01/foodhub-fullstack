@@ -8,8 +8,8 @@ import Link from "next/link";
 
 export function ProviderList({ providers }: { providers: Provider[] }) {
   return (
-    <section className="py-20 bg-white dark:bg-slate-950 transition-colors duration-300">
-      <div className="container mx-auto px-4">
+    <section className="py-24 px-6 bg-white dark:bg-slate-950 transition-colors duration-300">
+      <div className="container mx-auto px-6">
         <div className="text-center mb-12">
           <h3 className="text-[#FFC222] text-sm md:text-base font-bold uppercase tracking-widest mb-2">
             Our Recommendations

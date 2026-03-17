@@ -68,7 +68,8 @@ export default function LoginPage() {
         } else if (userRole === "PROVIDER") {
           router.push("/dashboard");
         } else {
-          router.push(callbackUrl || "/");
+          // router.push(callbackUrl || "/");
+          window.location.href = "/";
         }
       } catch (err) {
         toast.error("Something went wrong. Please try again.", { id: toastId });

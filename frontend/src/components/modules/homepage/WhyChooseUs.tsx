@@ -72,7 +72,7 @@ export function WhyChooseUs() {
             why thousands of foodies trust us daily.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-4">
           {features.map((feature) => (
             <Card
               key={feature.id}

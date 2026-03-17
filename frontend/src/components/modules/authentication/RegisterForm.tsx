@@ -52,7 +52,6 @@ export default function RegisterPage() {
       const toastId = toast.loading("Creating account...");
 
       try {
-        // 1. Determine the correct destination
         const destinationUrl =
           role === "PROVIDER" ? "/setup-profile" : callbackUrl;
 
@@ -72,8 +71,8 @@ export default function RegisterPage() {
 
         toast.success("Account created successfully!", { id: toastId });
 
-        // 2. Force the router push just in case the callbackURL doesn't auto-redirect
-        router.push(destinationUrl);
+        // router.push(destinationUrl);
+        window.location.href = destinationUrl;
       } catch (err) {
         toast.error("Something went wrong. Please try again.", { id: toastId });
       }
@@ -82,7 +81,6 @@ export default function RegisterPage() {
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-screen">
-      {/* --- Left Side: Visual --- */}
       <div className="hidden bg-muted lg:block relative h-full w-full overflow-hidden">
         <div
           className="absolute inset-0 h-full w-full bg-cover bg-center"

@@ -14,7 +14,6 @@ export async function addReview(payload: {
 }) {
   try {
     const cookieStore = await cookies();
-
     const res = await fetch(`${env.API_URL}/api/reviews/${payload.mealId}`, {
       method: "POST",
       headers: {
@@ -40,6 +39,33 @@ export async function addReview(payload: {
     console.error("Review Error:", error);
     throw new Error(
       error.message || "Something went wrong while submitting the review.",
+    );
+  }
+}
+
+export async function getMyReview(mealId: string) {
+  try {
+    const cookieStore = await cookies();
+    const res = await fetch(`${env.API_URL}/api/reviews/${mealId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieStore.toString(),
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      throw new Error(errorData?.message || "Failed to fetch review");
+    }
+
+    const data = await res.json();
+
+    return { data: data.data || data, error: null };
+  } catch (error: any) {
+    console.error("Get My Review Error:", error);
+    throw new Error(
+      error.message || "Something went wrong while fetching your review.",
     );
   }
 }

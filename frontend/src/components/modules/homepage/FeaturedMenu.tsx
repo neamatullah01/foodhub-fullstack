@@ -16,7 +16,7 @@ export function FeaturedMenu({ items }: { items: Meal[] }) {
   const { data: session } = authClient.useSession();
 
   return (
-    <section className="py-20 bg-white dark:bg-slate-950 transition-colors duration-300">
+    <section className="py-24 px-6 bg-white dark:bg-slate-950 transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h3 className="text-[#e63e3e] text-2xl font-handwriting italic mb-2">

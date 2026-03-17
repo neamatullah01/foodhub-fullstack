@@ -1,6 +1,8 @@
 import { getSession } from "@/services/user.service";
 import { redirect } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardRootLayout({
   children, // We won't actually use this, but Next.js requires it
   admin, // The @admin parallel slot

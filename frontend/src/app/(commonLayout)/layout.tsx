@@ -3,6 +3,8 @@ import { Navbar } from "@/components/layout/navbar";
 import { getSession } from "@/services/user.service";
 import { ReactNode } from "react";
 
+export const dynamic = "force-dynamic";
+
 const CommonLayout = async ({ children }: { children: ReactNode }) => {
   const user = await getSession();
   return (
