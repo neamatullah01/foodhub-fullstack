@@ -59,7 +59,7 @@ export function WhyChooseUs() {
         </svg>
       </div>
 
-      <div className="container mx-auto px-4 relative z-10 pb-6">
+      <div className="container mx-auto relative z-10 pb-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h3 className="text-[#FFC222] font-bold uppercase tracking-widest text-sm mb-3">
             Our Quality

@@ -1,5 +1,6 @@
 import { AllMeals } from "@/components/modules/meals/AllMeals";
 import { MealFilters } from "@/components/modules/meals/MealFilters";
+import { MealsPagination } from "@/components/modules/meals/MealsPagination";
 import { getAllCategories } from "@/services/category.service";
 import { mealService } from "@/services/meal.service";
 
@@ -13,8 +14,12 @@ const MealsPage = async ({
   const categoryId = params?.categoryId || "all";
   const sortOrder = params?.sortOrder || "asc";
 
+  const page = Number(params?.page) || 1;
+  const limit = 8;
+
   const query = {
-    limit: 10,
+    limit,
+    page,
     search,
     sortOrder,
     sortBy: params?.sortBy || "createdAt",
@@ -23,7 +28,12 @@ const MealsPage = async ({
 
   const { data } = await mealService.getAllMeal(query);
   const categories = await getAllCategories();
+
   const mealsList = data?.data || [];
+
+  const pagination = data?.pagination || {};
+  const totalPages = pagination.totalPages || 1;
+  const currentPage = pagination.page || 1;
 
   return (
     <section className="py-12 bg-slate-50 dark:bg-slate-950 min-h-screen">
@@ -36,11 +46,17 @@ const MealsPage = async ({
             Find the best food from local providers.
           </p>
         </div>
+
         <MealFilters
           currentParams={{ search, categoryId, sortOrder, sortBy: "price" }}
           categories={categories.data}
         />
+
         <AllMeals meals={mealsList} />
+
+        {mealsList.length > 0 && (
+          <MealsPagination currentPage={currentPage} totalPages={totalPages} />
+        )}
       </div>
     </section>
   );
