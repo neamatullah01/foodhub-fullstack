@@ -24,7 +24,18 @@ const addReview = async (userId: string, mealId: string, data: ReviewInput) => {
     },
   });
 };
+const getReview = async (userId: string, mealId: string) => {
+  return await prisma.review.findUnique({
+    where: {
+      userId_mealId: {
+        userId,
+        mealId,
+      },
+    },
+  });
+};
 
 export const reviewService = {
   addReview,
+  getReview,
 };
