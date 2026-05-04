@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { MapPin, Phone, ShoppingCart, Info } from "lucide-react";
+import { MapPin, Phone, ShoppingCart, Info, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
 import { useRouter } from "next/navigation";
@@ -26,6 +26,8 @@ export interface Provider {
   address: string;
   phone: string;
   meals: Meal[];
+  rating?: number;
+  totalReviews?: number;
 }
 
 export function ProviderProfile({ provider }: { provider: Provider }) {
@@ -70,6 +72,13 @@ export function ProviderProfile({ provider }: { provider: Provider }) {
 
             <div className="flex flex-wrap gap-4 pt-2">
               <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
+                <Star className={`w-4 h-4 ${provider.rating ? "text-[#FFC222] fill-[#FFC222]" : "text-slate-400"}`} />
+                <span className="font-bold text-slate-900 dark:text-white">{provider.rating ? provider.rating.toFixed(1) : "New"}</span>
+                {provider.totalReviews !== undefined && provider.totalReviews > 0 && (
+                  <span className="text-slate-500 text-xs">({provider.totalReviews} reviews)</span>
+                )}
+              </div>
+              <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
                 <MapPin className="w-4 h-4 text-[#FFC222]" />
                 {provider.address}
               </div>
@@ -113,7 +122,7 @@ export function ProviderProfile({ provider }: { provider: Provider }) {
 
                   <div className="absolute inset-0 bg-linear-to-t from-black/95 via-black/50 to-black/20" />
 
-                  <div className="absolute top-4 right-4 bg-[#10b981] text-white px-3 py-1 rounded-full text-sm font-bold shadow-md z-10 flex items-center gap-1">
+                  <div className="absolute top-4 right-4 bg-[#FFC222] text-white px-3 py-1 rounded-full text-sm font-bold shadow-md z-10 flex items-center gap-1">
                     <span>৳</span> {meal.price}
                   </div>
 

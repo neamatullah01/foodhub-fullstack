@@ -36,7 +36,8 @@ const features = [
 
 export function WhyChooseUs() {
   return (
-    <section className="relative py-32 overflow-hidden">
+    // 1. Removed `overflow-hidden` here so the waves can safely bleed out
+    <section className="relative py-32">
       <div
         className="absolute inset-0 w-full h-full bg-fixed bg-center bg-cover -z-30"
         style={{
@@ -47,15 +48,21 @@ export function WhyChooseUs() {
 
       <div className="absolute inset-0 bg-black/70 dark:bg-black/80 -z-20" />
 
-      <div className="absolute top-0 left-0 w-full overflow-hidden leading-[0] z-10">
+      {/* TOP WAVE FIXED */}
+      <div className="absolute -top-[4px] left-0 w-full leading-none z-20 pointer-events-none">
         <svg
           data-name="Layer 1"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"
-          className="relative block w-[calc(100%+1.3px)] h-[50px] md:h-[90px] fill-white dark:fill-slate-950"
+          // Increased height slightly to account for the -4px shift
+          className="relative block w-[calc(100%+2px)] h-[54px] md:h-[94px]"
         >
-          <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"></path>
+          <path
+            d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"
+            // Applied the stroke bleed trick
+            className="fill-white dark:fill-slate-950 stroke-white dark:stroke-slate-950 stroke-[3px]"
+          ></path>
         </svg>
       </div>
 
@@ -94,15 +101,21 @@ export function WhyChooseUs() {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] z-10">
+      {/* BOTTOM WAVE FIXED */}
+      <div className="absolute -bottom-[4px] left-0 w-full leading-none z-20 pointer-events-none">
         <svg
           data-name="Layer 1"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"
-          className="relative block w-[calc(100%+1.3px)] h-[50px] md:h-[90px] fill-white dark:fill-slate-950"
+          // Increased height slightly to account for the -4px shift
+          className="relative block w-[calc(100%+2px)] h-[54px] md:h-[94px]"
         >
-          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
+          <path
+            d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
+            // Applied the stroke bleed trick
+            className="fill-white dark:fill-slate-950 stroke-white dark:stroke-slate-950 stroke-[3px]"
+          ></path>
         </svg>
       </div>
     </section>

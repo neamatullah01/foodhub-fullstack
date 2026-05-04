@@ -45,9 +45,30 @@ export async function createProviderProfile(payload: CreateProviderPayload) {
   }
 }
 
-export async function getAllProviders(limit: number = 10) {
+interface ProviderQuery {
+  limit?: number;
+  page?: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: string;
+  rating?: number;
+}
+
+export async function getAllProviders(query: ProviderQuery | number = { limit: 10 }) {
   try {
-    const res = await fetch(`${API_URL}/api/providers?limit=${limit}`, {
+    const queryObj = typeof query === 'number' ? { limit: query } : query;
+    const params = new URLSearchParams();
+
+    Object.entries(queryObj).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, String(value));
+      }
+    });
+
+    const queryString = params.toString();
+    const fetchUrl = `${API_URL}/api/providers${queryString ? `?${queryString}` : ""}`;
+
+    const res = await fetch(fetchUrl, {
       cache: "no-store",
     });
     const data = await res.json();

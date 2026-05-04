@@ -28,6 +28,7 @@ export function AllMeals({ meals }: { meals: Meal[] }) {
   const cart = useCart();
   const router = useRouter();
   const { data: session } = authClient.useSession();
+
   return (
     <div className="flex flex-col gap-6">
       {meals.length === 0 ? (
@@ -58,7 +59,7 @@ export function AllMeals({ meals }: { meals: Meal[] }) {
                   <h3 className="text-2xl font-bold text-slate-900 dark:text-white line-clamp-1">
                     {meal.name}
                   </h3>
-                  <div className="shrink-0 bg-[#10b981] text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-sm flex items-center gap-1">
+                  <div className="shrink-0 bg-[#FFC222] text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-sm flex items-center gap-1">
                     <span>৳</span> {meal.price}
                   </div>
                 </div>
@@ -97,29 +98,33 @@ export function AllMeals({ meals }: { meals: Meal[] }) {
                   </Button>
                 </div>
               </div>
+
+              {/* Refined Provider Block */}
               <div
                 onClick={() => router.push(`/providers/${meal.provider.id}`)}
-                className="sm:w-[220px] bg-slate-50 dark:bg-slate-950 p-6 flex flex-col items-center justify-center border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 cursor-pointer"
+                className="sm:w-[220px] bg-slate-50 dark:bg-slate-950 p-4 sm:p-6 flex flex-row sm:flex-col items-center justify-between sm:justify-center border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 cursor-pointer"
               >
-                {meal.provider.imageUrl ? (
-                  <Image
-                    src={providerAvatar}
-                    alt={meal.provider.restaurantName}
-                    width={80}
-                    height={80}
-                    className="w-20 h-20 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-sm mb-3"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-[#FFC222] flex items-center justify-center text-black border-4 border-white dark:border-slate-800 shadow-sm mb-3">
-                    <Store className="w-8 h-8" />
-                  </div>
-                )}
+                <div className="flex items-center gap-3 sm:flex-col sm:gap-0 text-left sm:text-center">
+                  {meal.provider.imageUrl ? (
+                    <Image
+                      src={providerAvatar}
+                      alt={meal.provider.restaurantName}
+                      width={80}
+                      height={80}
+                      className="w-12 h-12 sm:w-20 sm:h-20 rounded-full object-cover border-2 sm:border-4 border-white dark:border-slate-800 shadow-sm sm:mb-3 shrink-0"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 sm:w-20 sm:h-20 rounded-full bg-[#FFC222] flex items-center justify-center text-black border-2 sm:border-4 border-white dark:border-slate-800 shadow-sm sm:mb-3 shrink-0">
+                      <Store className="w-6 h-6 sm:w-8 sm:h-8" />
+                    </div>
+                  )}
 
-                <span className="font-bold text-center text-slate-900 dark:text-white line-clamp-2 text-sm">
-                  {meal.provider.restaurantName}
-                </span>
+                  <span className="font-bold text-slate-900 dark:text-white line-clamp-1 sm:line-clamp-2 text-sm">
+                    {meal.provider.restaurantName}
+                  </span>
+                </div>
 
-                <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider mt-2 bg-white dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700">
+                <span className="text-[10px] sm:text-[11px] font-medium text-slate-500 uppercase tracking-wider shrink-0 bg-white dark:bg-slate-800 px-3 py-1 sm:mt-2 rounded-full border border-slate-200 dark:border-slate-700">
                   Provider
                 </span>
               </div>

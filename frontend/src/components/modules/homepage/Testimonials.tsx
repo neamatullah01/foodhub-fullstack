@@ -44,27 +44,27 @@ export function Testimonials() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {reviews.map((review) => (
-            <div key={review.id} className="bg-slate-50 dark:bg-slate-950 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm relative transition-transform hover:-translate-y-2">
-              <div className="flex text-[#FFC222] mb-6">
+            <div key={review.id} className="bg-slate-50 dark:bg-slate-950 p-5 md:p-6 lg:p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm relative transition-transform hover:-translate-y-2 flex flex-col">
+              <div className="flex text-[#FFC222] mb-4 lg:mb-6">
                 {[...Array(5)].map((_, i) => (
                   <Star 
                     key={i} 
-                    className={`w-5 h-5 ${i < review.rating ? "fill-current" : "fill-transparent text-slate-300 dark:text-slate-700"}`} 
+                    className={`w-4 h-4 lg:w-5 lg:h-5 ${i < review.rating ? "fill-current" : "fill-transparent text-slate-300 dark:text-slate-700"}`} 
                   />
                 ))}
               </div>
-              <p className="text-slate-700 dark:text-slate-300 mb-8 italic leading-relaxed">
+              <p className="text-slate-700 dark:text-slate-300 mb-6 lg:mb-8 italic leading-relaxed text-sm lg:text-base flex-1">
                 "{review.text}"
               </p>
-              <div className="flex items-center gap-4 mt-auto">
-                <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-[#FFC222]">
+              <div className="flex items-center gap-3 lg:gap-4 mt-auto">
+                <div className="relative w-10 h-10 lg:w-12 lg:h-12 rounded-full overflow-hidden border-2 border-[#FFC222] shrink-0">
                   <Image src={review.image} alt={review.name} fill className="object-cover" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-900 dark:text-white">{review.name}</h4>
-                  <p className="text-sm text-slate-500">{review.role}</p>
+                  <h4 className="font-bold text-slate-900 dark:text-white text-sm lg:text-base line-clamp-1">{review.name}</h4>
+                  <p className="text-xs lg:text-sm text-slate-500 line-clamp-1">{review.role}</p>
                 </div>
               </div>
             </div>
