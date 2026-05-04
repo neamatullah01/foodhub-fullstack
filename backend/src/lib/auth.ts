@@ -12,6 +12,7 @@ import { Role } from "../generated/prisma/enums";
 // ].filter((origin): origin is string => Boolean(origin));
 
 export const auth = betterAuth({
+  secret: process.env.BETTER_AUTH_SECRET,
   database: prismaAdapter(prisma, {
     provider: "postgresql", // or "mysql", "postgresql", ...etc
   }),

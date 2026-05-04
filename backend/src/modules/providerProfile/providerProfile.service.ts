@@ -25,11 +25,17 @@ const getAllProvider = async ({
   page,
   skip,
   limit,
+  sortBy,
+  sortOrder,
+  rating: minRating,
 }: {
   search: string | undefined;
   page: number;
   skip: number;
   limit: number;
+  sortBy: string;
+  sortOrder: string;
+  rating?: number | undefined;
 }) => {
   const where: any = {
     isApproved: true,
@@ -44,27 +50,73 @@ const getAllProvider = async ({
 
   const providers = await prisma.providerProfile.findMany({
     where,
-    skip,
-    take: limit,
     include: {
+      user: {
+        select: {
+          name: true,
+          email: true,
+          image: true,
+          phone: true,
+        },
+      },
       _count: {
         select: {
           meals: true,
         },
       },
-      meals: true,
+      meals: {
+        include: {
+          reviews: true,
+        },
+      },
     },
-    orderBy: {
-      createdAt: "desc",
-    },
+    ...(sortBy !== "rating" && {
+      orderBy: {
+        [sortBy]: sortOrder,
+      } as any,
+    }),
   });
 
-  const total = await prisma.providerProfile.count({
-    where,
+  let providersWithRating = providers.map((provider) => {
+    let totalRating = 0;
+    let totalReviews = 0;
+
+    const meals = (provider as any).meals || [];
+    meals.forEach((meal: any) => {
+      const reviews = meal.reviews || [];
+      reviews.forEach((review: any) => {
+        totalRating += review.rating;
+        totalReviews += 1;
+      });
+    });
+
+    const rating =
+      totalReviews > 0 ? Number((totalRating / totalReviews).toFixed(1)) : 0;
+
+    return {
+      ...provider,
+      rating,
+      totalReviews,
+    };
   });
+
+  if (minRating !== undefined) {
+    providersWithRating = providersWithRating.filter(
+      (p) => p.rating >= minRating
+    );
+  }
+
+  if (sortBy === "rating") {
+    providersWithRating.sort((a, b) =>
+      sortOrder === "desc" ? b.rating - a.rating : a.rating - b.rating
+    );
+  }
+
+  const total = providersWithRating.length;
+  const paginatedData = providersWithRating.slice(skip, skip + limit);
 
   return {
-    data: providers,
+    data: paginatedData,
     pagination: {
       total,
       page,
@@ -75,19 +127,54 @@ const getAllProvider = async ({
 };
 
 const getProviderById = async (id: string) => {
-  return await prisma.providerProfile.findUnique({
+  const provider = await prisma.providerProfile.findUnique({
     where: {
       id,
     },
     include: {
+      user: {
+        select: {
+          name: true,
+          email: true,
+          image: true,
+          phone: true,
+        },
+      },
       _count: {
         select: {
           meals: true,
         },
       },
-      meals: true,
+      meals: {
+        include: {
+          reviews: true,
+        },
+      },
     },
   });
+
+  if (!provider) {
+    throw new Error("Provider not found");
+  }
+
+  let totalRating = 0;
+  let totalReviews = 0;
+
+  provider.meals.forEach((meal) => {
+    meal.reviews.forEach((review) => {
+      totalRating += review.rating;
+      totalReviews += 1;
+    });
+  });
+
+  const rating =
+    totalReviews > 0 ? Number((totalRating / totalReviews).toFixed(1)) : 0;
+
+  return {
+    ...provider,
+    rating,
+    totalReviews,
+  };
 };
 
 const addMeal = async (userId: string, data: AddMealInput) => {

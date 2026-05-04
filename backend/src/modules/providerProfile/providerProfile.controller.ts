@@ -18,13 +18,18 @@ const createProfile: RequestHandler = async (req, res, next) => {
 
 const getAllProvider: RequestHandler = async (req, res, next) => {
   try {
-    const { search }: { search?: string } = req.query;
-    const { page, skip, limit } = paginationSortingHelper(req.query);
+    const { search, rating }: { search?: string; rating?: string } = req.query;
+    const { page, skip, limit, sortBy, sortOrder } = paginationSortingHelper(
+      req.query,
+    );
     const result = await providerProfileServices.getAllProvider({
       search,
       page,
       skip,
       limit,
+      sortBy,
+      sortOrder,
+      rating: rating ? Number(rating) : undefined,
     });
     res.status(200).json(result);
   } catch (error) {
