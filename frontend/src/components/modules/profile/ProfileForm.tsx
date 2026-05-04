@@ -2,6 +2,8 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "@tanstack/react-form";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,39 +23,52 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+const profileSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+});
+
 export function ProfileForm({ user }: { user: any }) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const [formData, setFormData] = useState({
-    name: user?.name || "",
-    phone: user?.phone || "",
-    address: user?.address || "",
-  });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      await updateProfile(formData);
-      toast.success("Profile updated successfully!");
-      setIsEditing(false);
-      router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update profile");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setFormData({
+  const form = useForm({
+    defaultValues: {
       name: user?.name || "",
       phone: user?.phone || "",
       address: user?.address || "",
-    });
+    },
+    onSubmit: async ({ value, formApi }) => {
+      const result = profileSchema.safeParse(value);
+
+      if (!result.success) {
+        result.error.issues.forEach((issue) => {
+          const fieldName = issue.path[0] as "name" | "phone" | "address";
+          formApi.setFieldMeta(fieldName, (prev) => ({
+            ...prev,
+            errorMap: { onChange: issue.message },
+          }));
+        });
+        toast.error("Please fix the validation errors.");
+        return;
+      }
+
+      const toastId = toast.loading("Updating profile...");
+
+      try {
+        await updateProfile(value);
+        toast.success("Profile updated successfully!", { id: toastId });
+        setIsEditing(false);
+        router.refresh();
+      } catch (error: any) {
+        toast.error(error.message || "Failed to update profile", { id: toastId });
+      }
+    },
+  });
+
+  const handleCancel = () => {
+    form.reset();
     setIsEditing(false);
   };
 
@@ -103,7 +118,14 @@ export function ProfileForm({ user }: { user: any }) {
           )}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+          className="space-y-6"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label className="text-slate-500">Email Address</Label>
@@ -117,71 +139,154 @@ export function ProfileForm({ user }: { user: any }) {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label>Full Name</Label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                <Input
-                  disabled={!isEditing}
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  className={`pl-9 ${isEditing ? "border-[#FFC222] ring-1 ring-[#FFC222]" : "bg-transparent border-slate-200"}`}
-                />
-              </div>
-            </div>
+            <form.Field
+              name="name"
+              children={(field) => (
+                <div className="space-y-2">
+                  <Label
+                    className={
+                      field.state.meta.errorMap["onChange"]
+                        ? "text-destructive"
+                        : ""
+                    }
+                  >
+                    Full Name
+                  </Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                    <Input
+                      disabled={!isEditing}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => {
+                        field.handleChange(e.target.value);
+                        if (field.state.meta.errorMap["onChange"]) {
+                          form.setFieldMeta("name", (prev) => ({
+                            ...prev,
+                            errorMap: { onChange: undefined },
+                          }));
+                        }
+                      }}
+                      className={`pl-9 ${isEditing ? (field.state.meta.errorMap["onChange"] ? "border-destructive ring-1 ring-destructive" : "border-[#FFC222] ring-1 ring-[#FFC222]") : "bg-transparent border-slate-200"}`}
+                    />
+                  </div>
+                  {field.state.meta.errorMap["onChange"] && (
+                    <p className="text-sm font-medium text-destructive">
+                      {field.state.meta.errorMap["onChange"]}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
 
-            <div className="space-y-2">
-              <Label>Phone Number</Label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                <Input
-                  disabled={!isEditing}
-                  value={formData.phone}
-                  placeholder="+8801..."
-                  onChange={(e) =>
-                    setFormData({ ...formData, phone: e.target.value })
-                  }
-                  className={`pl-9 ${isEditing ? "border-[#FFC222] ring-1 ring-[#FFC222]" : "bg-transparent border-slate-200"}`}
-                />
-              </div>
-            </div>
+            <form.Field
+              name="phone"
+              children={(field) => (
+                <div className="space-y-2">
+                  <Label
+                    className={
+                      field.state.meta.errorMap["onChange"]
+                        ? "text-destructive"
+                        : ""
+                    }
+                  >
+                    Phone Number
+                  </Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                    <Input
+                      disabled={!isEditing}
+                      name={field.name}
+                      value={field.state.value}
+                      placeholder="+8801..."
+                      onBlur={field.handleBlur}
+                      onChange={(e) => {
+                        field.handleChange(e.target.value);
+                        if (field.state.meta.errorMap["onChange"]) {
+                          form.setFieldMeta("phone", (prev) => ({
+                            ...prev,
+                            errorMap: { onChange: undefined },
+                          }));
+                        }
+                      }}
+                      className={`pl-9 ${isEditing ? (field.state.meta.errorMap["onChange"] ? "border-destructive ring-1 ring-destructive" : "border-[#FFC222] ring-1 ring-[#FFC222]") : "bg-transparent border-slate-200"}`}
+                    />
+                  </div>
+                  {field.state.meta.errorMap["onChange"] && (
+                    <p className="text-sm font-medium text-destructive">
+                      {field.state.meta.errorMap["onChange"]}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
           </div>
 
-          <div className="space-y-2">
-            <Label>Delivery Address</Label>
-            <div className="relative">
-              <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-              <Textarea
-                disabled={!isEditing}
-                value={formData.address}
-                placeholder="Enter your address..."
-                onChange={(e) =>
-                  setFormData({ ...formData, address: e.target.value })
-                }
-                className={`pl-9 min-h-[100px] resize-none ${isEditing ? "border-[#FFC222] ring-1 ring-[#FFC222]" : "bg-transparent border-slate-200"}`}
-              />
-            </div>
-          </div>
+          <form.Field
+            name="address"
+            children={(field) => (
+              <div className="space-y-2">
+                <Label
+                  className={
+                    field.state.meta.errorMap["onChange"]
+                      ? "text-destructive"
+                      : ""
+                  }
+                >
+                  Delivery Address
+                </Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                  <Textarea
+                    disabled={!isEditing}
+                    name={field.name}
+                    value={field.state.value}
+                    placeholder="Enter your address..."
+                    onBlur={field.handleBlur}
+                    onChange={(e) => {
+                      field.handleChange(e.target.value);
+                      if (field.state.meta.errorMap["onChange"]) {
+                        form.setFieldMeta("address", (prev) => ({
+                          ...prev,
+                          errorMap: { onChange: undefined },
+                        }));
+                      }
+                    }}
+                    className={`pl-9 min-h-[100px] resize-none ${isEditing ? (field.state.meta.errorMap["onChange"] ? "border-destructive ring-1 ring-destructive" : "border-[#FFC222] ring-1 ring-[#FFC222]") : "bg-transparent border-slate-200"}`}
+                  />
+                </div>
+                {field.state.meta.errorMap["onChange"] && (
+                  <p className="text-sm font-medium text-destructive">
+                    {field.state.meta.errorMap["onChange"]}
+                  </p>
+                )}
+              </div>
+            )}
+          />
 
           {isEditing && (
             <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="bg-[#FFC222] text-black hover:bg-[#e5ae1e] font-bold min-w-[140px]"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-4 h-4 mr-2" /> Save Changes
-                  </>
+              <form.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+                children={([canSubmit, isSubmitting]) => (
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-[#FFC222] text-black hover:bg-[#e5ae1e] font-bold min-w-[140px]"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4 mr-2" /> Save Changes
+                      </>
+                    )}
+                  </Button>
                 )}
-              </Button>
+              />
             </div>
           )}
         </form>

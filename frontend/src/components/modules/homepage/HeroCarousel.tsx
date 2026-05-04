@@ -37,7 +37,7 @@ const SLIDES = [
 
 export default function HeroCarousel() {
   return (
-    <section className="relative w-full h-[600px] md:h-[850px] overflow-hidden bg-white dark:bg-slate-950">
+    <section className="relative w-full h-[85vh] min-h-[500px] overflow-hidden bg-white dark:bg-slate-950">
       <Swiper
         modules={[Navigation, Pagination, Autoplay, EffectFade]}
         effect="fade"
@@ -64,16 +64,16 @@ export default function HeroCarousel() {
               </div>
               <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/80 dark:to-[#0f0f0f]/90 pointer-events-none" />
 
-              <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-white px-4 z-20 pb-20">
-                <span className="text-3xl md:text-5xl font-bold text-[#7dbd21] mb-4 drop-shadow-md -rotate-6">
+              <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-white px-4 z-20 pb-16 md:pb-24">
+                <span className="text-2xl md:text-4xl font-bold text-[#7dbd21] mb-3 md:mb-4 drop-shadow-md -rotate-6">
                   {slide.subtitle}
                 </span>
 
-                <h2 className="text-6xl md:text-8xl lg:text-9xl font-extrabold mb-6 drop-shadow-xl uppercase tracking-tighter">
+                <h2 className="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-4 md:mb-6 drop-shadow-xl uppercase tracking-tighter">
                   {slide.title}
                 </h2>
 
-                <p className="max-w-2xl text-lg md:text-xl mb-10 text-gray-200 font-medium drop-shadow-md">
+                <p className="max-w-2xl text-base md:text-lg lg:text-xl mb-8 md:mb-10 text-gray-200 font-medium drop-shadow-md">
                   {slide.description}
                 </p>
 
@@ -97,9 +97,9 @@ export default function HeroCarousel() {
           </SwiperSlide>
         ))}
       </Swiper>
-      <div className="absolute bottom-0 left-0 w-full z-30 leading-none pointer-events-none">
+      <div className="absolute bottom-0 left-0 w-full z-30 leading-none pointer-events-none translate-y-[2px]">
         <svg
-          className="block w-[calc(100%+1.3px)] h-[60px] md:h-[120px]"
+          className="block w-[calc(100%+1.3px)] h-[40px] md:h-[80px] lg:h-[120px]"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"

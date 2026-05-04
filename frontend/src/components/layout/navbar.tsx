@@ -12,6 +12,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
@@ -83,19 +84,13 @@ const Navbar = ({
   },
   menu = [
     { title: "Home", url: "/" },
-    { title: "Explore Restaurants", url: "/providers" },
+    { title: "Restaurants", url: "/providers" },
     {
-      title: "Browse Meals",
+      title: "Meals",
       url: "/meals",
-      items: [
-        {
-          title: "All Meals",
-          description: "Explore our complete catalog of homemade dishes.",
-          icon: <Search className="w-5 h-5" />,
-          url: "/meals",
-        },
-      ],
     },
+    { title: "About Us", url: "/about" },
+    { title: "Contact", url: "/contact" },
   ],
   auth = {
     login: { title: "Login", url: "/login" },
@@ -117,6 +112,7 @@ const Navbar = ({
 
   const userData = user?.data?.user;
   const role = userData?.role?.toUpperCase();
+  const pathname = usePathname();
 
   return (
     <section
@@ -143,7 +139,7 @@ const Navbar = ({
             <div className="flex items-center">
               <NavigationMenu>
                 <NavigationMenuList className="gap-2">
-                  {menu.map((item) => renderMenuItem(item))}
+                  {menu.map((item) => renderMenuItem(item, pathname))}
                 </NavigationMenuList>
               </NavigationMenu>
             </div>
@@ -154,14 +150,7 @@ const Navbar = ({
 
             <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
 
-            <Button
-              asChild
-              size="icon"
-              variant="ghost"
-              className="rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
-            >
-              <ModeToggle />
-            </Button>
+            <ModeToggle />
 
             {userData ? (
               <div className="ml-2">
@@ -201,7 +190,15 @@ const Navbar = ({
           </Link>
 
           <div className="flex items-center gap-1">
+            <ModeToggle />
+
             {role !== "PROVIDER" && role !== "ADMIN" && <CartSheet />}
+
+            {userData && (
+              <div className="mr-1 flex items-center justify-center">
+                <ProfileDropdown user={userData} />
+              </div>
+            )}
 
             <Sheet>
               <SheetTrigger asChild>
@@ -240,106 +237,12 @@ const Navbar = ({
                     collapsible
                     className="flex w-full flex-col gap-4"
                   >
-                    {menu.map((item) => renderMobileMenuItem(item))}
+                    {menu.map((item) => renderMobileMenuItem(item, pathname))}
                   </Accordion>
                 </div>
 
-                <div className="border-t border-slate-100 dark:border-slate-800/50 p-6 bg-slate-50 dark:bg-slate-900/20 mt-auto">
-                  {userData ? (
-                    <div className="flex flex-col gap-5">
-                      <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                        <Avatar className="h-10 w-10 border border-slate-100 dark:border-slate-700">
-                          <AvatarImage
-                            src={userData.image || ""}
-                            alt={userData.name}
-                          />
-                          <AvatarFallback className="bg-[#FFC222] text-black font-bold">
-                            {userData.name?.substring(0, 2).toUpperCase() ||
-                              "U"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
-                              {userData.name}
-                            </p>
-                            {role === "PROVIDER" && (
-                              <span className="bg-[#FFC222]/20 text-[#e5ae1e] text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0">
-                                PRO
-                              </span>
-                            )}
-                            {role === "ADMIN" && (
-                              <span className="bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0">
-                                ADMIN
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-slate-500 truncate">
-                            {userData.email}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col gap-3 mt-2">
-                        {role === "PROVIDER" && (
-                          <>
-                            <Link
-                              href="/dashboard"
-                              className="flex items-center gap-3 mobile-nav-link cursor-pointer"
-                            >
-                              <LayoutDashboard className="size-4 text-[#FFC222]" />
-                              Dashboard
-                            </Link>
-                            <Link
-                              href="/incomingOrders"
-                              className="flex items-center gap-3 mobile-nav-link cursor-pointer"
-                            >
-                              <ClipboardList className="size-4 text-[#FFC222]" />
-                              Incoming Orders
-                            </Link>
-                          </>
-                        )}
-                        {role === "ADMIN" && (
-                          <>
-                            <Link
-                              href="/dashboard"
-                              className="flex items-center gap-3 mobile-nav-link cursor-pointer"
-                            >
-                              <ShieldCheck className="size-4 text-[#FFC222]" />
-                              Admin Dashboard
-                            </Link>
-                          </>
-                        )}
-                        {role !== "PROVIDER" && role !== "ADMIN" && (
-                          <>
-                            <Link
-                              href="/profile"
-                              className="flex items-center gap-3 mobile-nav-link cursor-pointer"
-                            >
-                              <User className="size-4 text-[#FFC222]" />
-                              Manage Profile
-                            </Link>
-                            <Link
-                              href="/orders"
-                              className="flex items-center gap-3 mobile-nav-link cursor-pointer"
-                            >
-                              <ShoppingBag className="size-4 text-[#FFC222]" />
-                              My Orders
-                            </Link>
-                          </>
-                        )}
-                      </div>
-
-                      <Button
-                        onClick={handleLogout}
-                        variant="outline"
-                        className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 dark:border-red-900/30 dark:hover:bg-red-950/30 rounded-xl cursor-pointer mt-2"
-                      >
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Log out
-                      </Button>
-                    </div>
-                  ) : (
+                {!userData && (
+                  <div className="border-t border-slate-100 dark:border-slate-800/50 p-6 bg-slate-50 dark:bg-slate-900/20 mt-auto">
                     <div className="flex flex-col gap-3">
                       <Button
                         asChild
@@ -355,8 +258,8 @@ const Navbar = ({
                         <Link href={auth.signup.url}>{auth.signup.title}</Link>
                       </Button>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </SheetContent>
             </Sheet>
           </div>
@@ -366,11 +269,16 @@ const Navbar = ({
   );
 };
 
-const renderMenuItem = (item: MenuItem) => {
+const renderMenuItem = (item: MenuItem, pathname: string) => {
+  const isActive = item.url === "/" ? pathname === "/" : pathname.startsWith(item.url);
+  const activeClass = isActive 
+    ? "text-slate-900 dark:text-white relative after:absolute after:bottom-1.5 after:left-1/2 after:-translate-x-1/2 after:w-5 after:h-[3px] after:bg-[#FFC222] after:rounded-full after:transition-all after:duration-300" 
+    : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white relative after:absolute after:bottom-1.5 after:left-1/2 after:-translate-x-1/2 after:w-0 after:h-[3px] after:bg-[#FFC222] after:rounded-full after:transition-all after:duration-300 hover:after:w-5";
+
   if (item.items) {
     return (
       <NavigationMenuItem key={item.title}>
-        <NavigationMenuTrigger className="bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 data-[state=open]:bg-slate-100 dark:data-[state=open]:bg-slate-800 rounded-full px-4 font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer">
+        <NavigationMenuTrigger className={cn("bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 data-[state=open]:bg-slate-100 dark:data-[state=open]:bg-slate-800 rounded-full px-4 font-medium transition-colors cursor-pointer", activeClass)}>
           {item.title}
         </NavigationMenuTrigger>
         <NavigationMenuContent>
@@ -378,7 +286,7 @@ const renderMenuItem = (item: MenuItem) => {
             {item.items.map((subItem) => (
               <li key={subItem.title}>
                 <NavigationMenuLink asChild>
-                  <SubMenuLink item={subItem} />
+                  <SubMenuLink item={subItem} pathname={pathname} />
                 </NavigationMenuLink>
               </li>
             ))}
@@ -395,7 +303,8 @@ const renderMenuItem = (item: MenuItem) => {
           href={item.url}
           className={cn(
             navigationMenuTriggerStyle(),
-            "bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 rounded-full px-4 font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer",
+            "bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 rounded-full px-4 font-medium transition-all duration-300 cursor-pointer",
+            activeClass
           )}
         >
           {item.title}
@@ -405,26 +314,35 @@ const renderMenuItem = (item: MenuItem) => {
   );
 };
 
-const renderMobileMenuItem = (item: MenuItem) => {
+const renderMobileMenuItem = (item: MenuItem, pathname: string) => {
+  const isActive = item.url === "/" ? pathname === "/" : pathname.startsWith(item.url);
+  const activeClass = isActive 
+    ? "text-slate-900 dark:text-white border-l-4 border-[#FFC222] pl-2" 
+    : "text-slate-800 dark:text-slate-200 border-l-4 border-transparent pl-2";
+
   if (item.items) {
     return (
       <AccordionItem key={item.title} value={item.title} className="border-b-0">
-        <AccordionTrigger className="text-base font-semibold text-slate-800 dark:text-slate-200 hover:text-[#FFC222] hover:no-underline transition-colors py-2 cursor-pointer">
+        <AccordionTrigger className={cn("text-base font-semibold hover:text-[#FFC222] hover:no-underline transition-colors py-2 cursor-pointer", activeClass)}>
           {item.title}
         </AccordionTrigger>
         <AccordionContent className="mt-1 flex flex-col gap-1 pl-4 border-l-2 border-slate-100 dark:border-slate-800 ml-2">
-          {item.items.map((subItem) => (
-            <Link
-              key={subItem.title}
-              href={subItem.url}
-              className="flex items-center gap-3 rounded-lg p-3 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer"
-            >
-              {subItem.icon && (
-                <span className="text-[#FFC222]">{subItem.icon}</span>
-              )}
-              {subItem.title}
-            </Link>
-          ))}
+          {item.items.map((subItem) => {
+            const isSubActive = subItem.url === "/" ? pathname === "/" : pathname.startsWith(subItem.url);
+            const subActiveClass = isSubActive ? "text-slate-900 dark:text-white bg-slate-50 dark:bg-slate-900" : "text-slate-500 dark:text-slate-400";
+            return (
+              <Link
+                key={subItem.title}
+                href={subItem.url}
+                className={cn("flex items-center gap-3 rounded-lg p-3 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer", subActiveClass)}
+              >
+                {subItem.icon && (
+                  <span className="text-[#FFC222]">{subItem.icon}</span>
+                )}
+                {subItem.title}
+              </Link>
+            );
+          })}
         </AccordionContent>
       </AccordionItem>
     );
@@ -434,18 +352,23 @@ const renderMobileMenuItem = (item: MenuItem) => {
     <Link
       key={item.title}
       href={item.url}
-      className="block py-2 text-base font-semibold text-slate-800 dark:text-slate-200 hover:text-[#FFC222] transition-colors cursor-pointer"
+      className={cn("block py-2 text-base font-semibold hover:text-[#FFC222] transition-all duration-300 cursor-pointer", activeClass)}
     >
       {item.title}
     </Link>
   );
 };
 
-const SubMenuLink = ({ item }: { item: MenuItem }) => {
+const SubMenuLink = ({ item, pathname }: { item: MenuItem; pathname?: string }) => {
+  const isActive = pathname ? (item.url === "/" ? pathname === "/" : pathname.startsWith(item.url)) : false;
+  
   return (
     <Link
       href={item.url}
-      className="flex select-none gap-4 rounded-xl p-4 leading-none no-underline transition-all outline-none hover:bg-slate-50 dark:hover:bg-slate-900 hover:shadow-sm focus:bg-slate-50 dark:focus:bg-slate-900 group cursor-pointer"
+      className={cn(
+        "flex select-none gap-4 rounded-xl p-4 leading-none no-underline transition-all outline-none hover:bg-slate-50 dark:hover:bg-slate-900 hover:shadow-sm focus:bg-slate-50 dark:focus:bg-slate-900 group cursor-pointer",
+        isActive && "bg-slate-50 dark:bg-slate-900 shadow-sm"
+      )}
     >
       {item.icon && (
         <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#FFC222]/10 text-[#e5ae1e] group-hover:bg-[#FFC222] group-hover:text-black transition-colors">
@@ -453,7 +376,10 @@ const SubMenuLink = ({ item }: { item: MenuItem }) => {
         </div>
       )}
       <div className="space-y-1.5">
-        <div className="text-sm font-bold leading-none text-slate-900 dark:text-white group-hover:text-[#e5ae1e] transition-colors">
+        <div className={cn(
+          "text-sm font-bold leading-none group-hover:text-[#e5ae1e] transition-colors",
+          isActive ? "text-slate-900 dark:text-white" : "text-slate-900 dark:text-white"
+        )}>
           {item.title}
         </div>
         {item.description && (

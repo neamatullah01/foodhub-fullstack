@@ -3,6 +3,9 @@ import { FeaturedMenu } from "@/components/modules/homepage/FeaturedMenu";
 import HeroCarousel from "@/components/modules/homepage/HeroCarousel";
 import { ProviderList } from "@/components/modules/homepage/ProviderList";
 import { WhyChooseUs } from "@/components/modules/homepage/WhyChooseUs";
+import { HowItWorks } from "@/components/modules/homepage/HowItWorks";
+import { Testimonials } from "@/components/modules/homepage/Testimonials";
+import { Newsletter } from "@/components/modules/homepage/Newsletter";
 import { getAllCategories } from "@/services/category.service";
 import { mealService } from "@/services/meal.service";
 import { getAllProviders } from "@/services/provider.service";
@@ -32,6 +35,18 @@ export default async function Home() {
 
         <ScrollAnimate direction="up" delay={0.1}>
           <FeaturedMenu items={data.data || []} />
+        </ScrollAnimate>
+
+        <ScrollAnimate direction="up">
+          <HowItWorks />
+        </ScrollAnimate>
+
+        <ScrollAnimate direction="left">
+          <Testimonials />
+        </ScrollAnimate>
+
+        <ScrollAnimate direction="up">
+          <Newsletter />
         </ScrollAnimate>
       </div>
     </div>

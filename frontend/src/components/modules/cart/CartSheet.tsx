@@ -33,8 +33,8 @@ export function CartSheet() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="icon" className="relative h-9 w-9">
-          <ShoppingCart className="h-4 w-4" />
+        <Button variant="outline" size="icon" className="relative h-10 w-10 rounded-full border-slate-200 dark:border-slate-800 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+          <ShoppingCart className="h-5 w-5" />
           {itemCount > 0 && (
             <span className="absolute -top-2 -right-2 bg-[#e11d48] text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center">
               {itemCount}
@@ -130,7 +130,7 @@ export function CartSheet() {
             </div>
             <Button
               asChild
-              className="w-full bg-[#FFC222] hover:bg-[#ffcd44] text-black font-bold"
+              className="w-full bg-[#FFC222] hover:bg-[#e5ae1e] text-black font-bold"
             >
               <Link href="/checkout">Proceed to Checkout</Link>
             </Button>

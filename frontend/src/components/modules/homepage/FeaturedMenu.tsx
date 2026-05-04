@@ -93,7 +93,7 @@ export function FeaturedMenu({ items }: { items: Meal[] }) {
         <div className="flex justify-center">
           <Button
             asChild
-            className="group rounded-full bg-[#FFC222] text-black px-10 py-6 font-bold text-base shadow-lg transition-all duration-300 ease-out hover:bg-[#ffcd44] hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(255,194,34,0.7)] active:scale-95 active:translate-y-0"
+            className="group rounded-full bg-[#FFC222] text-black px-10 py-6 font-bold text-base shadow-lg transition-all duration-300 ease-out hover:bg-[#e5ae1e] hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(255,194,34,0.7)] active:scale-95 active:translate-y-0"
           >
             <Link href="/meals" className="flex items-center gap-2">
               View All Meals

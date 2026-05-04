@@ -1,68 +1,76 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
-import { MapPin, ShoppingBag } from "lucide-react";
+import { MapPin, ShoppingBag, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { createOrder } from "@/services/order.service";
+import { useForm } from "@tanstack/react-form";
+import { z } from "zod";
+
+const checkoutSchema = z.object({
+  address: z.string().min(5, "Address must be at least 5 characters long"),
+});
 
 export function CheckoutForm() {
   const cart = useCart();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [formData, setFormData] = useState({
-    address: "",
-  });
 
   const subtotal = cart.cartTotal();
   const deliveryFee = 50;
   const total = subtotal + deliveryFee;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm({
+    defaultValues: {
+      address: "",
+    },
+    onSubmit: async ({ value, formApi }) => {
+      if (cart.items.length === 0) {
+        toast.error("Your cart is empty!");
+        return;
+      }
 
-    if (cart.items.length === 0) {
-      toast.error("Your cart is empty!");
-      return;
-    }
+      const result = checkoutSchema.safeParse(value);
 
-    if (!formData.address) {
-      toast.error("Please provide a delivery address.");
-      return;
-    }
+      if (!result.success) {
+        result.error.issues.forEach((issue) => {
+          formApi.setFieldMeta("address", (prev) => ({
+            ...prev,
+            errorMap: { onChange: issue.message },
+          }));
+        });
+        toast.error("Please provide a valid delivery address.");
+        return;
+      }
 
-    setIsLoading(true);
-    const toastId = toast.loading("Placing your order...");
+      const toastId = toast.loading("Placing your order...");
 
-    try {
-      const orderPayload = {
-        providerId: cart.items[0].providerId,
-        address: formData.address,
-        paymentMethod: "CASH_ON_DELIVERY",
-        items: cart.items.map((item) => ({
-          mealId: item.id,
-          quantity: item.quantity,
-        })),
-      };
+      try {
+        const orderPayload = {
+          providerId: cart.items[0].providerId,
+          address: value.address,
+          paymentMethod: "CASH_ON_DELIVERY",
+          items: cart.items.map((item) => ({
+            mealId: item.id,
+            quantity: item.quantity,
+          })),
+        };
 
-      const { data, error } = await createOrder(orderPayload);
+        const { data, error } = await createOrder(orderPayload);
 
-      console.log("Backend Response:", data);
+        console.log("Backend Response:", data);
 
-      if (error) throw new Error(error.message);
+        if (error) throw new Error(error.message);
 
-      toast.success("Order placed successfully!", { id: toastId });
-      cart.clearCart();
-      router.push("/orders");
-    } catch (error) {
-      toast.error("Failed to place order. Please try again.", { id: toastId });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        toast.success("Order placed successfully!", { id: toastId });
+        cart.clearCart();
+        router.push("/orders");
+      } catch (error: any) {
+        toast.error(error.message || "Failed to place order. Please try again.", { id: toastId });
+      }
+    },
+  });
 
   if (cart.items.length === 0) {
     return (
@@ -95,20 +103,48 @@ export function CheckoutForm() {
             Delivery Details
           </h2>
 
-          <form id="checkout-form" onSubmit={handleSubmit}>
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                Full Address
-              </label>
-              <textarea
-                required
-                rows={4}
-                placeholder="e.g. House 12, Road 5, Dhanmondi, Dhaka..."
-                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFC222] transition-all resize-none"
-                value={formData.address}
-                onChange={(e) => setFormData({ address: e.target.value })}
-              />
-            </div>
+          <form
+            id="checkout-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              form.handleSubmit();
+            }}
+          >
+            <form.Field
+              name="address"
+              children={(field) => (
+                <div className="space-y-2">
+                  <label
+                    className={`text-sm font-semibold ${field.state.meta.errorMap["onChange"] ? "text-destructive" : "text-slate-700 dark:text-slate-300"}`}
+                  >
+                    Full Address
+                  </label>
+                  <textarea
+                    rows={4}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => {
+                      field.handleChange(e.target.value);
+                      if (field.state.meta.errorMap["onChange"]) {
+                        form.setFieldMeta("address", (prev) => ({
+                          ...prev,
+                          errorMap: { onChange: undefined },
+                        }));
+                      }
+                    }}
+                    placeholder="e.g. House 12, Road 5, Dhanmondi, Dhaka..."
+                    className={`w-full rounded-xl border bg-slate-50 dark:bg-slate-950 px-4 py-3 text-sm focus:outline-none focus:ring-2 transition-all resize-none ${field.state.meta.errorMap["onChange"] ? "border-destructive focus:ring-destructive" : "border-slate-200 dark:border-slate-700 focus:ring-[#FFC222]"}`}
+                  />
+                  {field.state.meta.errorMap["onChange"] && (
+                    <p className="text-sm font-medium text-destructive">
+                      {field.state.meta.errorMap["onChange"]}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
           </form>
         </div>
 
@@ -184,14 +220,25 @@ export function CheckoutForm() {
             </div>
           </div>
 
-          <Button
-            type="submit"
-            form="checkout-form"
-            disabled={isLoading || cart.items.length === 0}
-            className="w-full mt-8 bg-[#FFC222] hover:bg-[#e5ae1e] text-black font-bold h-14 rounded-2xl text-lg shadow-md transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? "Processing Order..." : "Confirm & Place Order"}
-          </Button>
+          <form.Subscribe
+            selector={(state) => [state.canSubmit, state.isSubmitting]}
+            children={([canSubmit, isSubmitting]) => (
+              <Button
+                type="submit"
+                form="checkout-form"
+                disabled={isSubmitting || cart.items.length === 0}
+                className="w-full mt-8 bg-[#FFC222] hover:bg-[#e5ae1e] text-black font-bold h-14 rounded-2xl text-lg shadow-md transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing Order...
+                  </>
+                ) : (
+                  "Confirm & Place Order"
+                )}
+              </Button>
+            )}
+          />
         </div>
       </div>
     </div>

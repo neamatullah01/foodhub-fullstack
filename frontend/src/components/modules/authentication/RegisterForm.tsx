@@ -279,7 +279,7 @@ export default function RegisterPage() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#FFC222] hover:bg-[#ffcd44] text-black font-bold mt-2"
+                  className="w-full bg-[#FFC222] hover:bg-[#e5ae1e] text-black font-bold mt-2"
                 >
                   {isSubmitting && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
