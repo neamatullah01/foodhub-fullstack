@@ -37,7 +37,8 @@ const SLIDES = [
 
 export default function HeroCarousel() {
   return (
-    <section className="relative w-full h-[85vh] min-h-[500px] overflow-hidden bg-white dark:bg-slate-950">
+    // Note: No overflow-hidden here so the wave can bleed down naturally!
+    <section className="relative w-full h-[85vh] min-h-[500px] bg-white dark:bg-slate-950">
       <Swiper
         modules={[Navigation, Pagination, Autoplay, EffectFade]}
         effect="fade"
@@ -52,6 +53,7 @@ export default function HeroCarousel() {
       >
         {SLIDES.map((slide) => (
           <SwiperSlide key={slide.id}>
+            {/* The overflow-hidden goes here on the slide itself */}
             <div className="relative w-full h-full overflow-hidden">
               <div className="absolute inset-0 animate-ken-burns">
                 <Image
@@ -64,7 +66,7 @@ export default function HeroCarousel() {
               </div>
               <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/80 dark:to-[#0f0f0f]/90 pointer-events-none" />
 
-              <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-white px-4 z-20 pb-16 md:pb-24">
+              <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-white px-4 z-20 pb-16 md:pb-26">
                 <span className="text-2xl md:text-4xl font-bold text-[#7dbd21] mb-3 md:mb-4 drop-shadow-md -rotate-6">
                   {slide.subtitle}
                 </span>
@@ -97,16 +99,18 @@ export default function HeroCarousel() {
           </SwiperSlide>
         ))}
       </Swiper>
-      <div className="absolute bottom-0 left-0 w-full z-30 leading-none pointer-events-none translate-y-[2px]">
+
+      {/* The Bulletproof Wave Wrapper */}
+      <div className="absolute -bottom-[4px] left-0 w-full z-30 leading-none pointer-events-none">
         <svg
-          className="block w-[calc(100%+1.3px)] h-[40px] md:h-[80px] lg:h-[120px]"
+          className="block w-[calc(100%+2px)] h-[44px] md:h-[84px] lg:h-[124px]"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"
         >
           <path
             d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-            className="fill-white dark:fill-slate-950"
+            className="fill-white dark:fill-slate-950 md:stroke-white md:dark:stroke-slate-950 md:stroke-[3px] lg:stroke-0"
           />
         </svg>
       </div>
