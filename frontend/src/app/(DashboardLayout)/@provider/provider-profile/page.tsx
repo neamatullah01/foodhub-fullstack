@@ -5,9 +5,8 @@ import { Store } from "lucide-react";
 
 export default async function ProviderProfilePage() {
   const response = await getMyProviderProfile();
-  
+
   if (!response.data || response.error) {
-    // If provider profile doesn't exist or fails to load
     redirect("/dashboard");
   }
 
@@ -23,7 +22,8 @@ export default async function ProviderProfilePage() {
           Restaurant Profile
         </h1>
         <p className="text-slate-500 mt-2 text-lg">
-          Manage your restaurant's public profile, contact details, and cover image.
+          Manage your restaurant's public profile, contact details, and cover
+          image.
         </p>
       </div>
 
