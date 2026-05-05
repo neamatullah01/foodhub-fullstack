@@ -45,6 +45,36 @@ export async function createProviderProfile(payload: CreateProviderPayload) {
   }
 }
 
+export async function updateProviderProfile(payload: Partial<CreateProviderPayload>) {
+  try {
+    const cookieStore = await cookies();
+    const res = await fetch(`${API_URL}/api/providers`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieStore.toString(),
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      throw new Error(
+        errorData?.message || "Failed to update provider profile.",
+      );
+    }
+
+    const data = await res.json();
+    return { data: data, error: null };
+  } catch (error: any) {
+    console.error("UPDATE PROVIDER ERROR:", error);
+    return {
+      data: null,
+      error: { message: error.message || "Something went wrong while updating." },
+    };
+  }
+}
+
 interface ProviderQuery {
   limit?: number;
   page?: number;
@@ -54,9 +84,11 @@ interface ProviderQuery {
   rating?: number;
 }
 
-export async function getAllProviders(query: ProviderQuery | number = { limit: 10 }) {
+export async function getAllProviders(
+  query: ProviderQuery | number = { limit: 10 },
+) {
   try {
-    const queryObj = typeof query === 'number' ? { limit: query } : query;
+    const queryObj = typeof query === "number" ? { limit: query } : query;
     const params = new URLSearchParams();
 
     Object.entries(queryObj).forEach(([key, value]) => {
@@ -86,6 +118,26 @@ export async function getProviderById(id: string) {
   try {
     const res = await fetch(`${API_URL}/api/providers/${id}`, {
       cache: "no-store",
+    });
+    const data = await res.json();
+    return { data: data, error: null };
+  } catch (error) {
+    console.error(error);
+    return {
+      data: null,
+      error: { message: "Something went wrong" },
+    };
+  }
+}
+
+export async function getMyProviderProfile() {
+  try {
+    const cookieStore = await cookies();
+    const res = await fetch(`${API_URL}/api/providers/my-profile`, {
+      cache: "no-store",
+      headers: {
+        Cookie: cookieStore.toString(),
+      },
     });
     const data = await res.json();
     return { data: data, error: null };
@@ -230,6 +282,31 @@ export async function updateOrderStatus(orderId: string, status: string) {
     return {
       data: null,
       error: { message: error.message || "Something went wrong" },
+    };
+  }
+}
+
+export async function getProviderDashboardStats() {
+  try {
+    const cookieStore = await cookies();
+    const res = await fetch(`${API_URL}/api/providers/dashboard`, {
+      cache: "no-store",
+      headers: {
+        Cookie: cookieStore.toString(),
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch provider dashboard stats");
+    }
+
+    const data = await res.json();
+    return { data: data, error: null };
+  } catch (error: any) {
+    console.error("FETCH PROVIDER DASHBOARD STATS ERROR:", error);
+    return {
+      data: null,
+      error: { message: error.message || "Failed to fetch dashboard stats" },
     };
   }
 }

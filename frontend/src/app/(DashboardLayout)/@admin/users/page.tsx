@@ -2,9 +2,29 @@ import { UserManager } from "@/components/modules/admin/users/UserManager";
 import { Users } from "lucide-react";
 import { getAllUsers } from "@/services/admin.service";
 
-export default async function AdminUsersPage() {
-  const response = await getAllUsers();
+export default async function AdminUsersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+
+  const query = {
+    page: resolvedSearchParams.page || 1,
+    limit: resolvedSearchParams.limit || 10,
+    search: resolvedSearchParams.search || "",
+    role: resolvedSearchParams.role || "",
+  };
+
+  const response = await getAllUsers(query);
+  // Based on the updated backend response, data should be in response.data.data
   const initialUsers = response.data?.data || response.data || [];
+  const pagination = response.data?.pagination || {
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPages: 1,
+  };
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -21,7 +41,7 @@ export default async function AdminUsersPage() {
         </p>
       </div>
 
-      <UserManager initialUsers={initialUsers} />
+      <UserManager initialUsers={initialUsers} pagination={pagination} />
     </div>
   );
 }

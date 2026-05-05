@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   ClipboardList,
@@ -20,6 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // 1. Updated Interface to match your exact backend response
 export interface PlatformOrder {
@@ -40,31 +43,59 @@ export interface PlatformOrder {
   };
 }
 
+export interface PaginationData {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export function AdminOrdersTable({
   initialOrders,
+  pagination,
 }: {
   initialOrders: PlatformOrder[];
+  pagination: PaginationData;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [orders, setOrders] = useState<PlatformOrder[]>(initialOrders);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("ALL");
 
-  // Filter logic for Admins
-  const filteredOrders = orders.filter((order) => {
-    const searchLower = searchQuery.toLowerCase();
+  // Sync state with server props
+  useEffect(() => {
+    setOrders(initialOrders);
+  }, [initialOrders]);
 
-    // 2. Updated search to look inside the nested objects
-    const matchesSearch =
-      order.id.toLowerCase().includes(searchLower) ||
-      order.user?.name?.toLowerCase().includes(searchLower) ||
-      order.user?.email?.toLowerCase().includes(searchLower) ||
-      order.provider?.restaurantName?.toLowerCase().includes(searchLower);
+  const createQueryString = (name: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value && value !== "ALL") {
+      params.set(name, value);
+    } else {
+      params.delete(name);
+    }
+    // Reset to page 1 when filter changes
+    if (name !== "page") {
+      params.set("page", "1");
+    }
+    return params.toString();
+  };
 
-    const matchesStatus =
-      statusFilter === "ALL" || order.status === statusFilter;
+  const handleSearch = (value: string) => {
+    router.push(pathname + "?" + createQueryString("search", value));
+  };
 
-    return matchesSearch && matchesStatus;
-  });
+  const handleStatusFilter = (value: string) => {
+    router.push(pathname + "?" + createQueryString("status", value));
+  };
+
+  const handlePageChange = (newPage: number) => {
+    router.push(pathname + "?" + createQueryString("page", String(newPage)));
+  };
+
+  const currentSearch = searchParams.get("search") || "";
+  const currentStatus = searchParams.get("status") || "ALL";
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -121,14 +152,20 @@ export function AdminOrdersTable({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
             placeholder="Search ID, Customer, or Restaurant..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            defaultValue={currentSearch}
+            onChange={(e) => {
+              const value = e.target.value;
+              clearTimeout((window as any).searchTimeout);
+              (window as any).searchTimeout = setTimeout(() => {
+                handleSearch(value);
+              }, 500);
+            }}
             className="pl-9 bg-slate-50 dark:bg-slate-950/50"
           />
         </div>
 
         <div className="w-full sm:w-48">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select value={currentStatus} onValueChange={handleStatusFilter}>
             <SelectTrigger className="bg-slate-50 dark:bg-slate-950/50">
               <SelectValue placeholder="Filter by Status" />
             </SelectTrigger>
@@ -159,7 +196,7 @@ export function AdminOrdersTable({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
-              {filteredOrders.length === 0 ? (
+              {orders.length === 0 ? (
                 <tr>
                   <td
                     colSpan={5}
@@ -170,7 +207,7 @@ export function AdminOrdersTable({
                   </td>
                 </tr>
               ) : (
-                filteredOrders.map((order) => (
+                orders.map((order) => (
                   <tr
                     key={order.id}
                     className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
@@ -232,6 +269,34 @@ export function AdminOrdersTable({
             </tbody>
           </table>
         </div>
+        
+        {/* Pagination UI */}
+        {pagination.totalPages > 1 && (
+          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50">
+            <p className="text-sm text-slate-500">
+              Showing page <span className="font-medium text-slate-900 dark:text-white">{pagination.page}</span> of{" "}
+              <span className="font-medium text-slate-900 dark:text-white">{pagination.totalPages}</span>
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(pagination.page - 1)}
+                disabled={pagination.page <= 1}
+              >
+                <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(pagination.page + 1)}
+                disabled={pagination.page >= pagination.totalPages}
+              >
+                Next <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

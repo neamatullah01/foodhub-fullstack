@@ -2,9 +2,28 @@ import { AdminOrdersTable } from "@/components/modules/admin/orders/AdminOrdersT
 import { ClipboardList } from "lucide-react";
 import { getAllPlatformOrders } from "@/services/admin.service";
 
-export default async function AdminOrdersPage() {
-  const response = await getAllPlatformOrders();
+export default async function AdminOrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+
+  const query = {
+    page: resolvedSearchParams.page || 1,
+    limit: resolvedSearchParams.limit || 10,
+    search: resolvedSearchParams.search || "",
+    status: resolvedSearchParams.status || "",
+  };
+
+  const response = await getAllPlatformOrders(query);
   const initialOrders = response.data?.data || response.data || [];
+  const pagination = response.data?.pagination || {
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPages: 1,
+  };
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -20,7 +39,7 @@ export default async function AdminOrdersPage() {
         </p>
       </div>
 
-      <AdminOrdersTable initialOrders={initialOrders} />
+      <AdminOrdersTable initialOrders={initialOrders} pagination={pagination} />
     </div>
   );
 }

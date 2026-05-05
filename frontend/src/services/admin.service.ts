@@ -6,11 +6,22 @@ import { env } from "@/env";
 
 const API_URL = env.API_URL;
 
-export async function getAllUsers() {
+export async function getAllUsers(query?: any) {
   try {
     const cookieStore = await cookies();
+    
+    const params = new URLSearchParams();
+    if (query) {
+      Object.entries(query).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          params.append(key, String(value));
+        }
+      });
+    }
+    const queryString = params.toString();
+    const fetchUrl = `${API_URL}/api/admin/users${queryString ? `?${queryString}` : ""}`;
 
-    const res = await fetch(`${API_URL}/api/admin/users`, {
+    const res = await fetch(fetchUrl, {
       cache: "no-store",
       headers: {
         Cookie: cookieStore.toString(),
@@ -57,10 +68,22 @@ export async function updateUserStatus(userId: string, newStatus: boolean) {
   }
 }
 
-export async function getAllPlatformOrders() {
+export async function getAllPlatformOrders(query?: any) {
   try {
     const cookieStore = await cookies();
-    const res = await fetch(`${API_URL}/api/admin/orders`, {
+    
+    const params = new URLSearchParams();
+    if (query) {
+      Object.entries(query).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          params.append(key, String(value));
+        }
+      });
+    }
+    const queryString = params.toString();
+    const fetchUrl = `${API_URL}/api/admin/orders${queryString ? `?${queryString}` : ""}`;
+
+    const res = await fetch(fetchUrl, {
       cache: "no-store",
       headers: {
         Cookie: cookieStore.toString(),
@@ -78,6 +101,31 @@ export async function getAllPlatformOrders() {
     return {
       data: null,
       error: { message: error.message || "Failed to fetch orders" },
+    };
+  }
+}
+
+export async function getAdminDashboardStats() {
+  try {
+    const cookieStore = await cookies();
+    const res = await fetch(`${API_URL}/api/admin/dashboard`, {
+      cache: "no-store",
+      headers: {
+        Cookie: cookieStore.toString(),
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch admin dashboard stats");
+    }
+
+    const data = await res.json();
+    return { data: data, error: null };
+  } catch (error: any) {
+    console.error("FETCH ADMIN DASHBOARD STATS ERROR:", error);
+    return {
+      data: null,
+      error: { message: error.message || "Failed to fetch dashboard stats" },
     };
   }
 }

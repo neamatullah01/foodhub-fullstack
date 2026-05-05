@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 const sidebarLinks = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { name: "Manage Users", href: "/users", icon: Users },
   { name: "All Orders", href: "/adminOrders", icon: ClipboardList },
   { name: "Manage Categories", href: "/categories", icon: Layers },

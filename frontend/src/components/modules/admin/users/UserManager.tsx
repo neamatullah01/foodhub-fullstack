@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   ShieldAlert,
@@ -24,6 +24,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { updateUserStatus } from "@/services/admin.service";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface UserData {
   id: string;
@@ -34,22 +36,60 @@ export interface UserData {
   image?: string;
 }
 
-export function UserManager({ initialUsers }: { initialUsers: UserData[] }) {
+export interface PaginationData {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export function UserManager({
+  initialUsers,
+  pagination,
+}: {
+  initialUsers: UserData[];
+  pagination: PaginationData;
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [users, setUsers] = useState<UserData[]>(initialUsers);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState("ALL");
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch =
-      user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchQuery.toLowerCase());
+  // Sync state with server props when they change
+  useEffect(() => {
+    setUsers(initialUsers);
+  }, [initialUsers]);
 
-    const matchesRole =
-      roleFilter === "ALL" || user.role?.toUpperCase() === roleFilter;
+  const createQueryString = (name: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value && value !== "ALL") {
+      params.set(name, value);
+    } else {
+      params.delete(name);
+    }
+    // Reset to page 1 when filter changes
+    if (name !== "page") {
+      params.set("page", "1");
+    }
+    return params.toString();
+  };
 
-    return matchesSearch && matchesRole;
-  });
+  const handleSearch = (value: string) => {
+    router.push(pathname + "?" + createQueryString("search", value));
+  };
+
+  const handleRoleFilter = (value: string) => {
+    router.push(pathname + "?" + createQueryString("role", value));
+  };
+
+  const handlePageChange = (newPage: number) => {
+    router.push(pathname + "?" + createQueryString("page", String(newPage)));
+  };
+
+  const currentSearch = searchParams.get("search") || "";
+  const currentRole = searchParams.get("role") || "ALL";
 
   const handleToggleStatus = (user: UserData) => {
     const newIsActiveState = !user.isActive;
@@ -126,14 +166,21 @@ export function UserManager({ initialUsers }: { initialUsers: UserData[] }) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
             placeholder="Search name or email..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            defaultValue={currentSearch}
+            onChange={(e) => {
+              // Quick debounce inline
+              const value = e.target.value;
+              clearTimeout((window as any).searchTimeout);
+              (window as any).searchTimeout = setTimeout(() => {
+                handleSearch(value);
+              }, 500);
+            }}
             className="pl-9 bg-slate-50 dark:bg-slate-950/50"
           />
         </div>
 
         <div className="w-full sm:w-48">
-          <Select value={roleFilter} onValueChange={setRoleFilter}>
+          <Select value={currentRole} onValueChange={handleRoleFilter}>
             <SelectTrigger className="bg-slate-50 dark:bg-slate-950/50">
               <SelectValue placeholder="Filter by Role" />
             </SelectTrigger>
@@ -158,7 +205,7 @@ export function UserManager({ initialUsers }: { initialUsers: UserData[] }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
-              {filteredUsers.length === 0 ? (
+              {users.length === 0 ? (
                 <tr>
                   <td
                     colSpan={4}
@@ -169,7 +216,7 @@ export function UserManager({ initialUsers }: { initialUsers: UserData[] }) {
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((user) => (
+                users.map((user) => (
                   <tr
                     key={user.id}
                     className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
@@ -242,6 +289,34 @@ export function UserManager({ initialUsers }: { initialUsers: UserData[] }) {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination UI */}
+        {pagination.totalPages > 1 && (
+          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50">
+            <p className="text-sm text-slate-500">
+              Showing page <span className="font-medium text-slate-900 dark:text-white">{pagination.page}</span> of{" "}
+              <span className="font-medium text-slate-900 dark:text-white">{pagination.totalPages}</span>
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(pagination.page - 1)}
+                disabled={pagination.page <= 1}
+              >
+                <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(pagination.page + 1)}
+                disabled={pagination.page >= pagination.totalPages}
+              >
+                Next <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

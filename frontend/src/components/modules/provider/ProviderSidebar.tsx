@@ -11,10 +11,10 @@ import {
 } from "lucide-react";
 
 const sidebarLinks = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { name: "Manage Menu", href: "/menu", icon: UtensilsCrossed },
   { name: "Incoming Orders", href: "/incomingOrders", icon: ClipboardList },
-  // { name: "Restaurant Profile", href: "/restaurantProfile", icon: Store },
+  { name: "Profile", href: "/provider-profile", icon: Store },
 ];
 
 export function ProviderSidebar() {
