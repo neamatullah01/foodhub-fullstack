@@ -16,6 +16,20 @@ const createProfile: RequestHandler = async (req, res, next) => {
   }
 };
 
+const updateProfile: RequestHandler = async (req, res, next) => {
+  try {
+    const data = req.body;
+    const userId = req.user?.id;
+    const result = await providerProfileServices.updateProfile(
+      data,
+      userId as string,
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getAllProvider: RequestHandler = async (req, res, next) => {
   try {
     const { search, rating }: { search?: string; rating?: string } = req.query;
@@ -117,8 +131,31 @@ const updateOrderStatus: RequestHandler = async (req, res, next) => {
   }
 };
 
+const getDashboardStats: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    const result = await providerProfileServices.getDashboardStats(
+      userId as string,
+    );
+    res.status(200).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getMyProfile: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    const result = await providerProfileServices.getMyProfile(userId as string);
+    res.status(200).json({ data: result, error: null });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export const providerProfileController = {
   createProfile,
+  updateProfile,
   getAllProvider,
   getProviderById,
   addMeal,
@@ -126,4 +163,6 @@ export const providerProfileController = {
   removeMeal,
   getIncomingOrders,
   updateOrderStatus,
+  getDashboardStats,
+  getMyProfile,
 };

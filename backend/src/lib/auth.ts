@@ -3,24 +3,25 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { Role } from "../generated/prisma/enums";
 
-// const trustedOrigins = [
-//   process.env.APP_URL,
-//   process.env.BETTER_AUTH_URL,
-//   process.env.PROD_URL,
-//   "http://localhost:3000",
-//   "http://localhost:5000",
-// ].filter((origin): origin is string => Boolean(origin));
-
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   database: prismaAdapter(prisma, {
-    provider: "postgresql", // or "mysql", "postgresql", ...etc
+    provider: "postgresql",
   }),
   emailAndPassword: {
     enabled: true,
   },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    },
+  },
   baseURL: process.env.BETTER_AUTH_URL,
-  trustedOrigins: ["https://foodhub-delivery.vercel.app"],
+  trustedOrigins: [
+    "https://foodhub-delivery.vercel.app",
+    "http://localhost:3000",
+  ],
   user: {
     additionalFields: {
       role: {
@@ -33,7 +34,7 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        before: async (user, context) => {
+        before: async (user) => {
           return {
             data: {
               ...user,
@@ -56,6 +57,6 @@ export const auth = betterAuth({
     crossSubDomainCookies: {
       enabled: false,
     },
-    disableCSRFCheck: true, // Allow requests without Origin header (Postman, mobile apps, etc.)
+    disableCSRFCheck: true,
   },
 });

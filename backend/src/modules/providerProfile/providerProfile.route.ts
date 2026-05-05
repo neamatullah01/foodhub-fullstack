@@ -12,12 +12,30 @@ router.get(
   providerProfileController.getIncomingOrders,
 );
 
+router.get(
+  "/dashboard",
+  verifyAuth(Role.PROVIDER),
+  providerProfileController.getDashboardStats,
+);
+
+router.get(
+  "/my-profile",
+  verifyAuth(Role.PROVIDER),
+  providerProfileController.getMyProfile,
+);
+
 router.get("/:id", providerProfileController.getProviderById);
 
 router.post(
   "/",
   verifyAuth(Role.PROVIDER),
   providerProfileController.createProfile,
+);
+
+router.patch(
+  "/",
+  verifyAuth(Role.PROVIDER),
+  providerProfileController.updateProfile,
 );
 
 router.post(

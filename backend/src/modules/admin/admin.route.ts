@@ -14,4 +14,6 @@ router.patch(
   adminController.updateUserStatus,
 );
 
+router.get("/dashboard", verifyAuth(Role.ADMIN), adminController.getDashboardStats);
+
 export const adminRouter = router;

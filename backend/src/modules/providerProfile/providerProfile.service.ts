@@ -20,6 +20,25 @@ const createProfile = async (data: ProfileInputData, userId: string) => {
   });
 };
 
+const updateProfile = async (data: Partial<ProfileInputData>, userId: string) => {
+  const existProfile = await prisma.providerProfile.findUnique({
+    where: {
+      userId,
+    },
+  });
+
+  if (!existProfile) {
+    throw new Error("Provider profile not found");
+  }
+
+  return await prisma.providerProfile.update({
+    where: {
+      userId,
+    },
+    data,
+  });
+};
+
 const getAllProvider = async ({
   search,
   page,
@@ -323,8 +342,93 @@ const updateOrderStatus = async (
   });
 };
 
+const getDashboardStats = async (userId: string) => {
+  const providerData = await prisma.providerProfile.findUniqueOrThrow({
+    where: { userId },
+    select: { id: true },
+  });
+
+  const providerId = providerData.id;
+
+  const [totalMeals, totalOrders, pendingOrders, revenueAgg] = await Promise.all([
+    prisma.meal.count({ where: { providerId } }),
+    prisma.order.count({ where: { providerId } }),
+    prisma.order.count({ where: { providerId, status: "PENDING" } }),
+    prisma.order.aggregate({
+      _sum: { totalPrice: true },
+      where: { providerId, status: { not: "CANCELLED" } },
+    }),
+  ]);
+
+  const totalRevenue = revenueAgg._sum.totalPrice || 0;
+
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const recentOrdersData = await prisma.order.findMany({
+    where: {
+      providerId,
+      createdAt: { gte: thirtyDaysAgo },
+    },
+    select: {
+      createdAt: true,
+      totalPrice: true,
+      status: true,
+    },
+    orderBy: { createdAt: "asc" },
+  });
+
+  const chartDataMap: Record<string, { date: string; ordersCount: number; revenue: number }> = {};
+  recentOrdersData.forEach((order) => {
+    const dateStr = order.createdAt.toISOString().split("T")[0] as string;
+    if (!chartDataMap[dateStr]) {
+      chartDataMap[dateStr] = { date: dateStr, ordersCount: 0, revenue: 0 };
+    }
+    chartDataMap[dateStr].ordersCount += 1;
+    if (order.status !== "CANCELLED") {
+      chartDataMap[dateStr].revenue += order.totalPrice;
+    }
+  });
+
+  const chartData = Object.values(chartDataMap);
+
+  const recentOrders = await prisma.order.findMany({
+    where: { providerId },
+    take: 10,
+    orderBy: { createdAt: "desc" },
+    include: {
+      user: { select: { name: true, email: true } },
+      orderItems: { include: { meal: { select: { name: true } } } },
+    },
+  });
+
+  return {
+    overview: {
+      totalMeals,
+      totalOrders,
+      pendingOrders,
+      totalRevenue,
+    },
+    chartData,
+    recentOrders,
+  };
+};
+
+const getMyProfile = async (userId: string) => {
+  const provider = await prisma.providerProfile.findUnique({
+    where: { userId },
+  });
+
+  if (!provider) {
+    throw new Error("Provider profile not found");
+  }
+
+  return provider;
+};
+
 export const providerProfileServices = {
   createProfile,
+  updateProfile,
   getAllProvider,
   getProviderById,
   addMeal,
@@ -332,4 +436,6 @@ export const providerProfileServices = {
   removeMeal,
   getIncomingOrders,
   updateOrderStatus,
+  getDashboardStats,
+  getMyProfile,
 };
